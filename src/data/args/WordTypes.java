@@ -1,10 +1,9 @@
 package data.args;
 
 /**
- * Types of words. 
+ * Types of words that can be recognized.
  * 
  * @author AtoshDustosh
- *
  */
 public enum WordTypes {
   IDN("IDN"),
@@ -14,13 +13,13 @@ public enum WordTypes {
   CHAR("CHAR"),
   OP_DL_COM("Operator_Delimiter_COM"),
   ;
-  
+
   private String type = null;
-  
+
   private WordTypes(String type) {
     this.type = type;
   }
-  
+
   public String getType() {
     return this.type;
   }

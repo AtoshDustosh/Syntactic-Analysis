@@ -1,11 +1,12 @@
-package data.input; 
+package data.input;
 
 public enum InputFile {
   charDFA("src/data/input/charDFA.format"),
   idnDFA("src/data/input/idnDFA.format"),
   numDFA("src/data/input/numDFA.format"),
-  operator_delimiter_com_DFA("src/data/input/operator_delimiter_com_DFA.format"),
+  op_dl_comDFA("src/data/input/operator_delimiter_com_DFA.format"),
   stringDFA("src/data/input/stringDFA.format"),
+
   ;
 
   private String filePath = null;
@@ -13,7 +14,7 @@ public enum InputFile {
   private InputFile(String filePath) {
     this.filePath = filePath;
   }
-  
+
   /**
    * Get the path of the input file.
    * 
