@@ -13,6 +13,12 @@ import java.util.regex.Pattern;
 import data.args.WordTypes;
 import data.input.InputFile;
 
+/**
+ * This class loads a DFA table from an input file and change state
+ * according to the table when input a character.
+ * 
+ * @author AtoshDustosh
+ */
 public class DfaAnalyzer {
   public static final String analysisError = "analysis error";
   public static final String analysisNotFinished = "analysis not finished";
