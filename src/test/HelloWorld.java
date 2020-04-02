@@ -1,22 +1,16 @@
 package test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class HelloWorld {
   public static int value = 2;
 
   public static void main(String[] args) {
-    double dData1 = 02.3323E2;
-    System.out.printf("dData1: %f\n", dData1);
-    Set<String> strSet = new HashSet<String>();
-    strSet.add("int");
-    strSet.add("&");
-    strSet.add("\"");
+    char ch = '\n';
+    String str1 = "\n";
+    String str2 = "\\n";
+    String str3 = "" + ch;
 
-    System.out.println("\"int\" in set?: " + strSet.contains("int"));
-    System.out.println("\"&\" in set?: " + strSet.contains("&"));
-    System.out.println("\"\"\" in set?: " + strSet.contains("\""));
-
+    System.out.println("str1: " + str1);
+    System.out.println("str2: " + str2);
+    System.out.println("str3: " + str3);
   }
 }
