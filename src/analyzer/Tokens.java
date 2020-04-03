@@ -13,6 +13,10 @@ public class Tokens {
   BufferedReader br;
   private HashMap<String, Integer> type_SerialNum;
 
+  public Tokens() {
+    super();
+  }
+
   public Tokens(String wordSerialNumberFilePath) {
     this.loadWordSerialNumberFile(wordSerialNumberFilePath);
   }
@@ -47,7 +51,18 @@ public class Tokens {
 
   }
 
-
+  /**
+   * Get a copy of Tokens
+   * 
+   * @return copy of Tokens
+   */
+  public Tokens getTokensCopy() {
+    Tokens tks_new = new Tokens();
+    tks_new.tokenList = new ArrayList<>(this.tokenList);
+    tks_new.br = new BufferedReader(this.br);
+    tks_new.type_SerialNum = new HashMap<>(this.type_SerialNum);
+    return tks_new;
+  }
 
   /**
    * The type code is generated according to the loaded Map and the input string
@@ -80,5 +95,8 @@ public class Tokens {
     Tokens ts = new Tokens("src/analyzer/CodeList");
     System.out.println(ts.wordSerialNumberToType(19));
     System.out.println(ts.wordTypeToSerialNumber("+"));
+    Tokens ts1 = ts.getTokensCopy();
+    System.out.println(ts.hashCode());
+    System.out.println(ts1.hashCode());
   }
 }
