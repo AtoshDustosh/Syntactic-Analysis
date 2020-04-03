@@ -108,8 +108,8 @@ public class DfaAnalyzer {
    */
   public DfaAnalyzer(String dfaWordAnalyzerType, String dfaFilePath) {
     this.dfaWordAnalyzerType = dfaWordAnalyzerType;
-    this.presentState = 1;
     this.loadDfaTableFile(dfaFilePath);
+    this.presentState = 1;
   }
 
   /**
@@ -183,6 +183,10 @@ public class DfaAnalyzer {
     } else {
       return false;
     }
+  }
+
+  public int getState() {
+    return this.presentState;
   }
 
   /**

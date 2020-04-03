@@ -48,6 +48,8 @@ public class LexicalAnalyzer {
     this.analyzerMap.put(WordTypes.OP_DL_COM.getType(), new DfaAnalyzer(
         WordTypes.OP_DL_COM.getType(), InputFile.op_dl_comDFA.getFilePath()));
 
+    System.out.println(
+        this.analyzerMap.get(WordTypes.OP_DL_COM.getType()).getState());
   }
 
   public static void main(String[] args) {
@@ -69,6 +71,7 @@ public class LexicalAnalyzer {
 
       if (this.chPointer == 0 && (ch == ' ' || ch == '\t')) {
         this.chList.remove(0);
+        this.chPointer = 0;
         continue;
       }
 
@@ -118,6 +121,7 @@ public class LexicalAnalyzer {
     } else {
       this.analyzerUsed = this.analyzerMap.get(WordTypes.OP_DL_COM.getType());
     }
+    System.out.println("analyzer status: " + this.analyzerUsed.getState());
   }
 
   private String convertStateToResult(int analyzerState) {
