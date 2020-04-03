@@ -1,16 +1,22 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HelloWorld {
   public static int value = 2;
 
   public static void main(String[] args) {
-    char ch = '\n';
-    String str1 = "\n";
-    String str2 = "\\n";
-    String str3 = "" + ch;
+    List<String> strList = new ArrayList<>();
 
-    System.out.println("str1: " + str1);
-    System.out.println("str2: " + str2);
-    System.out.println("str3: " + str3);
+    strList.add("aaa");
+    strList.add("bbb");
+    strList.add("ccc");
+
+    System.out.println(strList.toString());
+    strList.remove(0);
+    System.out.println(strList.toString());
+    strList.add("ddd");
+    System.out.println(strList.toString());
   }
 }

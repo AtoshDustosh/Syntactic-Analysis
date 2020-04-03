@@ -2,8 +2,8 @@ package analyzer;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -40,30 +40,56 @@ public class LexicalAnalyzer {
       WordTypes.OP_DL_COM.getType(),
       InputFile.op_dl_comDFA.getFilePath());
 
-  Queue<String> chQueue = new LinkedList<>();
+  List<Character> chList = new ArrayList<>();
+
+  Tokens tokens = new Tokens(Tokens.wordSerialNumberFilePath);
 
   public LexicalAnalyzer() {
 
   }
 
   public Tokens analyzeFile(String filePath) {
+    int presentChIndexInList = 0;
     try {
       Scanner scanner = new Scanner(new FileInputStream(filePath));
       boolean hasNext = scanner.hasNext();
+
+      // read input file and split into characters
       while (hasNext) {
-        String result = null;
+        String result = "";
         char[] lineChars = (scanner.nextLine() + "\n").toCharArray();
         for (int i = 0; i < lineChars.length; i++) {
+          // analyze characters
+
           if (lineChars[i] == ' ' || lineChars[i] == '\t') {
+            // ignore ' ' and '\t'
             continue;
+          } else {
+            // load a character from input file
+            this.chList.add(lineChars[i]);
+            result = this.analyzeChar(this.chList.get(presentChIndexInList));
           }
-          /*
-           * analyze input char and process queue.
-           */
+
+          // process of analysis
+          if (this.isNonnegativeInteger(result)) {
+            // token not recognized - if new entry of the DFA table is a non-negative integer
+            int value = Integer.valueOf(result);
+            if (value == 0) {
+              // error occurs - ignore temporary character and re-analyze
+              char wrongCh = this.chList.remove(0);
+              this.resetAllAnalyzer();
+              presentChIndexInList = 0;
+              System.out.println("analysis error - ignore \"" + wrongCh + "\"");
+              continue;
+            } else {
+              // enter next state successfully - continue analysis
+              presentChIndexInList++;
+            }
+          } else {
+            // token recognized - new entry of the DFA table is not a number
+
+          }
         }
-        /*
-         * 
-         */
       }
 
     } catch (FileNotFoundException e) {
@@ -73,9 +99,21 @@ public class LexicalAnalyzer {
     return null;
   }
 
+  public Tokens getTokens() {
+    return this.tokens;
+  }
+
   private String analyzeChar(char ch) {
 
     return null;
+  }
+
+  private void resetAllAnalyzer() {
+    this.charAnalyzer.reset();
+    this.numAnalyzer.reset();
+    this.idnAnalyzer.reset();
+    this.stringAnalyzer.reset();
+    this.op_dl_comAnalyzer.reset();
   }
 
   private boolean isNonnegativeInteger(String str) {
