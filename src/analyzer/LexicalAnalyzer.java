@@ -100,7 +100,7 @@ public class LexicalAnalyzer {
   }
 
   public Tokens getTokens() {
-    return this.tokens;
+    return this.tokens.getTokensCopy();
   }
 
   private String analyzeChar(char ch) {
