@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Tokens {
+  public static final String wordSerialNumberFilePath = "src/analyzer/CodeList";
 
   private List<Token> tokenList = new ArrayList<>();
   BufferedReader br;
@@ -29,27 +30,30 @@ public class Tokens {
     this.tokenList.add(new Token(wordSerialNumber, wordValue));
   }
 
+  public void add(Token newToken) {
+    this.tokenList.add(newToken);
+  }
+
   /**
-   * Each line of the format file is read in a "type coded" style and loaded into the Map
+   * Each line of the format file is read in a "type coded" style and
+   * loaded into the Map
    * 
    * @param filePath
    */
   private void loadWordSerialNumberFile(String filePath) {
     try {
-      br = new BufferedReader(new FileReader(new File(filePath)));
-      type_SerialNum = new HashMap<>();
+      this.br = new BufferedReader(new FileReader(new File(filePath)));
+      this.type_SerialNum = new HashMap<>();
       String line;
-      while ((line = br.readLine()) != null) {
+      while ((line = this.br.readLine()) != null) {
         String[] array_type_num = line.split(" ");
         String type = array_type_num[0];
         int num = Integer.parseInt(array_type_num[1]);
-        type_SerialNum.put(type, num);
+        this.type_SerialNum.put(type, num);
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-
 
   }
 
@@ -59,7 +63,7 @@ public class Tokens {
    * @return a copy of the Token list
    */
   public ArrayList<Token> getTokenListCopy() {
-    return new ArrayList<Token>(tokenList);
+    return new ArrayList<Token>(this.tokenList);
   }
 
   /**
@@ -76,14 +80,16 @@ public class Tokens {
   }
 
   /**
-   * The type code is generated according to the loaded Map and the input string
+   * The type code is generated according to the loaded Map and the
+   * input string
    * 
    * @param wordType
    * @return type code
    */
-  private int wordTypeToSerialNumber(String wordType) {
-    if (type_SerialNum.containsKey(wordType))
-      return type_SerialNum.get(wordType);
+  public int wordTypeToSerialNumber(String wordType) {
+    if (this.type_SerialNum.containsKey(wordType)) {
+      return this.type_SerialNum.get(wordType);
+    }
     return 0;
   }
 
@@ -93,17 +99,18 @@ public class Tokens {
    * @param wordSerialNumber
    * @return worTtype
    */
-  private String wordSerialNumberToType(int wordSerialNumber) {
-    for (String s : type_SerialNum.keySet()) {
-      if (type_SerialNum.get(s) == wordSerialNumber)
+  public String wordSerialNumberToType(int wordSerialNumber) {
+    for (String s : this.type_SerialNum.keySet()) {
+      if (this.type_SerialNum.get(s) == wordSerialNumber) {
         return s;
+      }
     }
     return "None";
   }
 
   public static void main(String[] args) {
     /* test */
-    Tokens ts = new Tokens("src/analyzer/CodeList");
+    Tokens ts = new Tokens(wordSerialNumberFilePath);
     System.out.println(ts.wordSerialNumberToType(19));
     System.out.println(ts.wordTypeToSerialNumber("+"));
     Tokens ts1 = ts.getTokensCopy();
