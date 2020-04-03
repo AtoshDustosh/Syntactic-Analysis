@@ -20,17 +20,17 @@ import data.input.InputFile;
  * @author AtoshDustosh
  */
 public class DfaAnalyzer {
-  public static final String analysisError = "analysis error";
-  public static final String analysisNotFinished = "analysis not finished";
+  public static final int state_finished = -1;
+  public static final int state_error = 0;
 
   private String dfaWordAnalyzerType = null;
 
   /*
    * index of present state in DFA - start from 1
    */
-  private int presentStateIndex = 0;
+  private int presentState = 0;
 
-  private String analyzedWordType = analysisNotFinished;
+  private String analyzedWordType = "";
 
   /**
    * fields to store the DFA table and can be used to make
@@ -49,6 +49,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.enterNextState('\''));
     System.out.println(analyzer.enterNextState('a'));
     System.out.println(analyzer.enterNextState('\''));
+    System.out.println(analyzer.enterNextState('\''));
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.NUM.getType(),
@@ -58,6 +59,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.enterNextState('.'));
     System.out.println(analyzer.enterNextState('8'));
     System.out.println(analyzer.enterNextState('0'));
+    System.out.println(analyzer.enterNextState('g'));
     System.out.println(analyzer.enterNextState('g'));
     System.out.println(analyzer.getAnalyzedWordType());
 
@@ -69,6 +71,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.enterNextState('\"'));
     System.out.println(analyzer.enterNextState('d'));
     System.out.println(analyzer.enterNextState('\"'));
+    System.out.println(analyzer.enterNextState('\"'));
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.IDN.getType(),
@@ -76,9 +79,10 @@ public class DfaAnalyzer {
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('_'));
     System.out.println(analyzer.enterNextState('1'));
-    System.out.println(analyzer.enterNextState('.'));
-    System.out.println(analyzer.enterNextState('.'));
-    System.out.println(analyzer.enterNextState('\"'));
+    System.out.println(analyzer.enterNextState('a'));
+    System.out.println(analyzer.enterNextState(' '));
+    System.out.println(analyzer.enterNextState('v'));
+    System.out.println(analyzer.enterNextState('v'));
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.OP_DL_COM.getType(),
@@ -88,6 +92,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.enterNextState('*'));
     System.out.println(analyzer.enterNextState('*'));
     System.out.println(analyzer.enterNextState('/'));
+    System.out.println(analyzer.enterNextState('9'));
     System.out.println(analyzer.enterNextState('9'));
     System.out.println(analyzer.getAnalyzedWordType());
 
@@ -103,7 +108,7 @@ public class DfaAnalyzer {
    */
   public DfaAnalyzer(String dfaWordAnalyzerType, String dfaFilePath) {
     this.dfaWordAnalyzerType = dfaWordAnalyzerType;
-    this.presentStateIndex = 1;
+    this.presentState = 1;
     this.loadDfaTableFile(dfaFilePath);
   }
 
@@ -111,14 +116,14 @@ public class DfaAnalyzer {
    * Load a character and enter next state according to its DFA table.
    * 
    * @param ch character loaded
-   * @return state serial number (>0) if successfully changes state; 0
-   *         if error occurs such as when there is no next state
-   *         according to DFA table or the analyzing process finishes.
+   * @return state serial number (>0) if successfully changes state;
+   *         state_error if error occurs such as when there is no next
+   *         state according to DFA table; state_finished when the
+   *         analyzing process finishes.
    */
   public int enterNextState(char ch) {
     if (this.isAnalysisFinished()) {
-      // if analysis finished, directly return 0 and quit the method
-      return 0;
+      return state_finished;
     }
     Set<String> columnKeySet = this.chToColumn.keySet();
     String str = this.replaceEscapeChar(ch);
@@ -129,18 +134,18 @@ public class DfaAnalyzer {
       column = this.chToColumn.get("else");
     }
 //    System.out.println("ch: " + str + " ~ " + column);
-    List<String> rowList = this.statesRow.get(this.presentStateIndex - 1);
+    List<String> rowList = this.statesRow.get(this.presentState - 1);
     String entry = rowList.get(column);
 //    System.out.println("entry: " + entry);
     if (this.isNonnegativeInteger(entry)) {
-      this.presentStateIndex = Integer.valueOf(entry);
-      if (this.presentStateIndex == 0) {
-        this.analyzedWordType = analysisError;
-      }
-      return this.presentStateIndex;
+      // if table entry is a non-negative integer
+      this.presentState = Integer.valueOf(entry);
+      return this.presentState;
     } else {
+      // analysis finished
       this.analyzedWordType = entry;
-      return 0;
+      this.presentState = state_finished;
+      return state_finished;
     }
   }
 
@@ -156,8 +161,8 @@ public class DfaAnalyzer {
     this.statesRow.clear();
     this.dfaWordAnalyzerType = dfaWordAnalyzerType;
 
-    this.presentStateIndex = 1;
-    this.analyzedWordType = analysisNotFinished;
+    this.presentState = 1;
+    this.analyzedWordType = "";
 
     this.loadDfaTableFile(dfaFilePath);
   }
@@ -166,17 +171,17 @@ public class DfaAnalyzer {
    * Reset the state and result this DFA analyzer keeps.
    */
   public void reset() {
-    this.presentStateIndex = 1;
-    this.analyzedWordType = analysisNotFinished;
+    this.presentState = 1;
+    this.analyzedWordType = "";
   }
 
   public boolean isAnalysisFinished() {
-    if (this.analyzedWordType.equals(analysisNotFinished)) {
-      return false;
-    } else if (this.analyzedWordType.equals(analysisError)) {
+    if (this.presentState == state_finished) {
+      return true;
+    } else if (this.presentState == state_error) {
       return true;
     } else {
-      return true;
+      return false;
     }
   }
 

@@ -18,6 +18,16 @@ public class Tokens {
     super();
   }
 
+  public static void main(String[] args) {
+    /* test */
+    Tokens ts = new Tokens(wordSerialNumberFilePath);
+    System.out.println(ts.wordSerialNumberToType(19));
+    System.out.println(ts.wordTypeToSerialNumber("+"));
+    Tokens ts1 = ts.getTokensCopy();
+    System.out.println(ts.hashCode());
+    System.out.println(ts1.hashCode());
+  }
+
   public Tokens(String wordSerialNumberFilePath) {
     this.loadWordSerialNumberFile(wordSerialNumberFilePath);
   }
@@ -32,29 +42,6 @@ public class Tokens {
 
   public void add(Token newToken) {
     this.tokenList.add(newToken);
-  }
-
-  /**
-   * Each line of the format file is read in a "type coded" style and
-   * loaded into the Map
-   * 
-   * @param filePath
-   */
-  private void loadWordSerialNumberFile(String filePath) {
-    try {
-      this.br = new BufferedReader(new FileReader(new File(filePath)));
-      this.type_SerialNum = new HashMap<>();
-      String line;
-      while ((line = this.br.readLine()) != null) {
-        String[] array_type_num = line.split(" ");
-        String type = array_type_num[0];
-        int num = Integer.parseInt(array_type_num[1]);
-        this.type_SerialNum.put(type, num);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
   }
 
   /**
@@ -108,13 +95,37 @@ public class Tokens {
     return "None";
   }
 
-  public static void main(String[] args) {
-    /* test */
-    Tokens ts = new Tokens(wordSerialNumberFilePath);
-    System.out.println(ts.wordSerialNumberToType(19));
-    System.out.println(ts.wordTypeToSerialNumber("+"));
-    Tokens ts1 = ts.getTokensCopy();
-    System.out.println(ts.hashCode());
-    System.out.println(ts1.hashCode());
+  @Override
+  public String toString() {
+    String str = "";
+    for (int i = 0; i < this.tokenList.size(); i++) {
+      Token token = this.tokenList.get(i);
+      str = str + "[" + this.wordSerialNumberToType(token.getWordSerialNumber())
+          + ", " + token.getWordValue() + "]\n";
+    }
+    return str;
   }
+
+  /**
+   * Each line of the format file is read in a "type coded" style and
+   * loaded into the Map
+   * 
+   * @param filePath
+   */
+  private void loadWordSerialNumberFile(String filePath) {
+    try {
+      this.br = new BufferedReader(new FileReader(new File(filePath)));
+      this.type_SerialNum = new HashMap<>();
+      String line;
+      while ((line = this.br.readLine()) != null) {
+        String[] array_type_num = line.split(" ");
+        String type = array_type_num[0];
+        int num = Integer.parseInt(array_type_num[1]);
+        this.type_SerialNum.put(type, num);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
 }

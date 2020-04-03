@@ -17,4 +17,9 @@ public class Token {
     return this.wordValue;
   }
 
+  @Override
+  public String toString() {
+    return "[" + this.wordSerialNumber + ", " + this.wordValue + "]";
+  }
+
 }
