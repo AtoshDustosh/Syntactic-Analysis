@@ -31,6 +31,10 @@ public class Tokens {
     this.tokenList.add(new Token(wordSerialNumber, wordValue));
   }
 
+  public void add(Token newToken) {
+    this.tokenList.add(newToken);
+  }
+
   /**
    * Each line of the format file is read in a "type coded" style and
    * loaded into the Map
@@ -74,7 +78,7 @@ public class Tokens {
    * @param wordType
    * @return type code
    */
-  private int wordTypeToSerialNumber(String wordType) {
+  public int wordTypeToSerialNumber(String wordType) {
     if (this.type_SerialNum.containsKey(wordType)) {
       return this.type_SerialNum.get(wordType);
     }
@@ -85,9 +89,9 @@ public class Tokens {
    * Returns a character type based on the type code
    * 
    * @param wordSerialNumber
-   * @return worTtype
+   * @return wordType
    */
-  private String wordSerialNumberToType(int wordSerialNumber) {
+  public String wordSerialNumberToType(int wordSerialNumber) {
     for (String s : this.type_SerialNum.keySet()) {
       if (this.type_SerialNum.get(s) == wordSerialNumber) {
         return s;

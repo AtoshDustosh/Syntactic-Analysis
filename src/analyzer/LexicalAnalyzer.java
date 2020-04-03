@@ -56,7 +56,7 @@ public class LexicalAnalyzer {
 
       // read input file and split into characters
       while (hasNext) {
-        String result = "";
+        String tableEntry = "";
         char[] lineChars = (scanner.nextLine() + "\n").toCharArray();
         for (int i = 0; i < lineChars.length; i++) {
           // analyze characters
@@ -67,13 +67,14 @@ public class LexicalAnalyzer {
           } else {
             // load a character from input file
             this.chList.add(lineChars[i]);
-            result = this.analyzeChar(this.chList.get(presentChIndexInList));
+            tableEntry = this
+                .analyzeChar(this.chList.get(presentChIndexInList));
           }
 
           // process of analysis
-          if (this.isNonnegativeInteger(result)) {
+          if (this.isNonnegativeInteger(tableEntry)) {
             // token not recognized - if new entry of the DFA table is a non-negative integer
-            int value = Integer.valueOf(result);
+            int value = Integer.valueOf(tableEntry);
             if (value == 0) {
               // error occurs - ignore temporary character and re-analyze
               char wrongCh = this.chList.remove(0);
@@ -87,7 +88,12 @@ public class LexicalAnalyzer {
             }
           } else {
             // token recognized - new entry of the DFA table is not a number
-
+            // create a token and remove corresponding characters in chList
+            Token token = this.buildToken(tableEntry, presentChIndexInList);
+            for (int k = 0; k < presentChIndexInList; k++) {
+              this.chList.remove(0);
+            }
+            this.tokens.add(token);
           }
         }
       }
@@ -95,8 +101,7 @@ public class LexicalAnalyzer {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
-
-    return null;
+    return this.tokens.getTokensCopy();
   }
 
   public Tokens getTokens() {
@@ -104,8 +109,19 @@ public class LexicalAnalyzer {
   }
 
   private String analyzeChar(char ch) {
-
+    /*
+     * \TODO
+     */
     return null;
+  }
+
+  private Token buildToken(String wordType, int borderIndex) {
+    int wordSerialNumber = this.tokens.wordTypeToSerialNumber(wordType);
+    String wordValue = "";
+    for (int i = 0; i < borderIndex; i++) {
+      wordValue = wordValue + this.chList.get(i);
+    }
+    return new Token(wordSerialNumber, wordValue);
   }
 
   private void resetAllAnalyzer() {

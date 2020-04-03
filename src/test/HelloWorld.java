@@ -16,6 +16,8 @@ public class HelloWorld {
     System.out.println(strList.toString());
     strList.remove(0);
     System.out.println(strList.toString());
+    strList.remove(0);
+    System.out.println(strList.toString());
     strList.add("ddd");
     System.out.println(strList.toString());
   }
