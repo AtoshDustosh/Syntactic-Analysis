@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import data.args.KeyWord;
 import data.args.WordTypes;
 import data.input.InputFile;
 
@@ -19,7 +20,7 @@ import data.input.InputFile;
  * @author AtoshDustosh
  */
 public class LexicalAnalyzer {
-  public static final String testFilePath = "src/test/test.code";
+  public static final String testFilePath = "src/test/test2.code";
 
   public static final String ANALYSIS_ERROR = "analysis error";
   public static final String ANALYSIS_UNFINISHED = "analysis unfinished";
@@ -78,10 +79,12 @@ public class LexicalAnalyzer {
         this.chList.remove(0);
         this.chPointer = 0;
       } else {
-        this.buildToken(this.analyzedWordType, this.chPointer);
+        Token token = this.buildToken(this.analyzedWordType, this.chPointer);
         for (int i = 0; i < this.chPointer; i++) {
           this.chList.remove(0);
         }
+        this.tokens.add(token);
+        System.out.println("token: " + token.toString());
         this.chPointer = 0;
         this.resetAnalyzer(this.analyzerUsed.getDfaAnalyzerWordType());
       }
@@ -95,6 +98,14 @@ public class LexicalAnalyzer {
 
   private String analyzeChar(char ch) {
     int analyzerState = 0;
+    if (this.chPointer == 0) {
+      this.selectAnalyzer(ch);
+    }
+    analyzerState = this.analyzerUsed.enterNextState(ch);
+    return this.convertStateToResult(analyzerState);
+  }
+
+  private void selectAnalyzer(char ch) {
     if (ch == '\'') {
       this.analyzerUsed = this.analyzerMap.get(WordTypes.CHAR.getType());
     } else if (ch == '\"') {
@@ -107,8 +118,6 @@ public class LexicalAnalyzer {
     } else {
       this.analyzerUsed = this.analyzerMap.get(WordTypes.OP_DL_COM.getType());
     }
-    analyzerState = this.analyzerUsed.enterNextState(ch);
-    return this.convertStateToResult(analyzerState);
   }
 
   private String convertStateToResult(int analyzerState) {
@@ -124,10 +133,17 @@ public class LexicalAnalyzer {
   }
 
   private Token buildToken(String wordType, int borderIndex) {
-    int wordSerialNumber = this.tokens.wordTypeToSerialNumber(wordType);
+    int wordSerialNumber = 0;
     String wordValue = "";
     for (int i = 0; i < borderIndex; i++) {
       wordValue = wordValue + this.chList.get(i);
+    }
+    if (wordType.equals(WordTypes.IDN.getType())
+        && KeyWord.isKeyWord(wordValue)) {
+      // recognize whether this word is a key word
+      wordSerialNumber = this.tokens.wordTypeToSerialNumber(wordValue);
+    } else {
+      wordSerialNumber = this.tokens.wordTypeToSerialNumber(wordType);
     }
     return new Token(wordSerialNumber, wordValue);
   }

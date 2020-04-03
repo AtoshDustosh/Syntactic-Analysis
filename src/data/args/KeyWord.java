@@ -11,23 +11,36 @@ import java.util.Set;
  */
 public class KeyWord {
 
-  private Set<String> keyWordSet = new HashSet<String>();
+  @SuppressWarnings("serial")
+  private static final Set<String> keyWordSet = new HashSet<String>() {
+    {
+      this.add("int");
+      this.add("double");
+      this.add("boolean");
+      this.add("record");
+      this.add("if");
+      this.add("else");
+      this.add("do");
+      this.add("while");
+      this.add("function");
+      this.add("call");
+    }
+  };
 
   public KeyWord() {
-    this.keyWordSet.add("int");
-    this.keyWordSet.add("double");
-    this.keyWordSet.add("boolean");
-    this.keyWordSet.add("record");
-    this.keyWordSet.add("if");
-    this.keyWordSet.add("else");
-    this.keyWordSet.add("do");
-    this.keyWordSet.add("while");
-    this.keyWordSet.add("function");
-    this.keyWordSet.add("call");
   }
 
-  public boolean isKeyWord(String word) {
-    if (this.keyWordSet.contains(word)) {
+  public static String getKeyWord(String word) {
+    for (String str : keyWordSet) {
+      if (str.equals(word)) {
+        return word;
+      }
+    }
+    return "";
+  }
+
+  public static boolean isKeyWord(String word) {
+    if (keyWordSet.contains(word)) {
       return true;
     } else {
       return false;
