@@ -155,15 +155,17 @@ public class DfaAnalyzer {
     this.chToColumn.clear();
     this.statesRow.clear();
     this.dfaWordAnalyzerType = dfaWordAnalyzerType;
+
     this.presentStateIndex = 1;
     this.analyzedWordType = analysisNotFinished;
+
     this.loadDfaTableFile(dfaFilePath);
   }
 
   /**
    * Reset the state and result this DFA analyzer keeps.
    */
-  public void resetAnalyzer() {
+  public void reset() {
     this.presentStateIndex = 1;
     this.analyzedWordType = analysisNotFinished;
   }
