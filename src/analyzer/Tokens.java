@@ -1,11 +1,17 @@
 package analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Tokens {
 
   private List<Token> tokenList = new ArrayList<>();
+  BufferedReader br;
+  private HashMap<String, Integer> type_SerialNum;
 
   public Tokens(String wordSerialNumberFilePath) {
     this.loadWordSerialNumberFile(wordSerialNumberFilePath);
@@ -19,23 +25,60 @@ public class Tokens {
     this.tokenList.add(new Token(wordSerialNumber, wordValue));
   }
 
+  /**
+   * Each line of the format file is read in a "type coded" style and loaded into the Map
+   * 
+   * @param filePath
+   */
   private void loadWordSerialNumberFile(String filePath) {
-    /**
-     * \TODO
-     */
+    try {
+      br = new BufferedReader(new FileReader(new File(filePath)));
+      type_SerialNum = new HashMap<>();
+      String line;
+      while ((line = br.readLine()) != null) {
+        String[] array_type_num = line.split(" ");
+        String type = array_type_num[0];
+        int num = Integer.parseInt(array_type_num[1]);
+        type_SerialNum.put(type, num);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
+
+
+  /**
+   * The type code is generated according to the loaded Map and the input string
+   * 
+   * @param wordType
+   * @return type code
+   */
   private int wordTypeToSerialNumber(String wordType) {
-    /**
-     * \TODO
-     */
+    if (type_SerialNum.containsKey(wordType))
+      return type_SerialNum.get(wordType);
     return 0;
   }
 
+  /**
+   * Returns a character type based on the type code
+   * 
+   * @param wordSerialNumber
+   * @return worTtype
+   */
   private String wordSerialNumberToType(int wordSerialNumber) {
-    /**
-     * \TODO
-     */
-    return "";
+    for (String s : type_SerialNum.keySet()) {
+      if (type_SerialNum.get(s) == wordSerialNumber)
+        return s;
+    }
+    return "None";
+  }
+
+  public static void main(String[] args) {
+    /* test */
+    Tokens ts = new Tokens("src/analyzer/CodeList");
+    System.out.println(ts.wordSerialNumberToType(19));
+    System.out.println(ts.wordTypeToSerialNumber("+"));
   }
 }
