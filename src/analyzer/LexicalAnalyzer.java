@@ -55,6 +55,7 @@ public class LexicalAnalyzer {
   public static void main(String[] args) {
     LexicalAnalyzer analyzer = new LexicalAnalyzer();
     Tokens tokens = analyzer.analyzeFile(LexicalAnalyzer.testFilePath);
+    System.out.println("\n");
     System.out.println("tokens:\n" + tokens.toString());
   }
 
@@ -67,7 +68,7 @@ public class LexicalAnalyzer {
     String analysisResult = "";
     while (this.chList.isEmpty() == false) {
       char ch = this.chList.get(this.chPointer);
-      System.out.println("(" + ch + ")");
+//      System.out.println("(" + ch + ")");
 
       if (this.chPointer == 0 && (ch == ' ' || ch == '\t')) {
         this.chList.remove(0);
