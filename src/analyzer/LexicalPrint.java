@@ -5,8 +5,10 @@ import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JButton;
@@ -128,13 +130,17 @@ public class LexicalPrint extends JFrame {
        * while ((line = br.readLine()) != null) { textArea_SourceCode.append(line + "\n"); allCode
        * += line + "\n"; }
        */
+      String line;
+      File file = new File(dirpath, fileName);
+      BufferedReader br = new BufferedReader(new FileReader(file));// ÎÄ¼þÖ¸Õë
+      while ((line = br.readLine()) != null)
+        textArea_SourceCode.append(line + "\n");
 
 
       LexicalAnalyzer la = new LexicalAnalyzer();
-      Tokens tokenPrint = la.analyzeFile(dirpath + fileName);// The new Token object modifies the
-                                                             // initialization statement
-      // if the program requires it, but does not change the
-      // quantity name
+      Tokens tokenPrint = la.analyzeFile(dirpath + fileName);// The new Token object modifies the //
+                                                             // initialization statement // if the
+      // program requires it, but does not change the // quantity name
 
 
 
@@ -142,7 +148,7 @@ public class LexicalPrint extends JFrame {
         String tkline = "<" + tk.getWordSerialNumber() + "£¬" + tk.getWordValue() + ">" + "\n";
         textArea_Tokens.append(tkline);
       }
-
+      br.close();
 
     } catch (Exception e) {
       e.printStackTrace();
