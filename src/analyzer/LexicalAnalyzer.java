@@ -2,12 +2,13 @@ package analyzer;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import data.args.KeyWord;
 import data.args.WordTypes;
@@ -20,7 +21,8 @@ import data.input.InputFile;
  * @author AtoshDustosh
  */
 public class LexicalAnalyzer {
-  public static final String testFilePath = "src/test/test2.code";
+  public static final String errorLogFilePath = "src/test/error.log";
+  public static final String testFilePath = "src/test/testError.code";
 
   public static final String ANALYSIS_ERROR = "analysis error";
   public static final String ANALYSIS_UNFINISHED = "analysis unfinished";
@@ -30,11 +32,14 @@ public class LexicalAnalyzer {
 
   private int chPointer = 0;
   private List<Character> chList = new ArrayList<>();
+  private Map<Integer, Location> chLocationMap = new HashMap<>();
 
   private DfaAnalyzer analyzerUsed = null;
   private String analyzedWordType = "";
 
   private Tokens tokens = new Tokens(Tokens.wordSerialNumberFilePath);
+
+  private PrintWriter errorLogFileWriter = null;
 
   public LexicalAnalyzer() {
     this.analyzerMap.put(WordTypes.CHAR.getType(), new DfaAnalyzer(
@@ -60,12 +65,19 @@ public class LexicalAnalyzer {
   }
 
   public Tokens analyzeFile(String filePath) {
+    try {
+      this.errorLogFileWriter = new PrintWriter(
+          new FileOutputStream(LexicalAnalyzer.errorLogFilePath));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
     this.convertFileIntoCharList(filePath);
     System.out.println(this.chList.toString());
     this.chPointer = 0;
 
     System.out.println("file reading completed");
     String analysisResult = "";
+    int charSerialNumber = 0;
     while (this.chList.isEmpty() == false) {
       char ch = this.chList.get(this.chPointer);
 //      System.out.println("(" + ch + ")");
@@ -73,13 +85,20 @@ public class LexicalAnalyzer {
       if (this.chPointer == 0 && (ch == ' ' || ch == '\t')) {
         this.chList.remove(0);
         this.chPointer = 0;
+        charSerialNumber++;
         continue;
       }
 
       analysisResult = this.analyzeChar(ch);
       if (analysisResult.equals(ANALYSIS_UNFINISHED)) {
         this.chPointer++;
+        charSerialNumber++;
       } else if (analysisResult.equals(ANALYSIS_ERROR)) {
+        char errorChar = this.chList.get(0);
+        if (errorChar != '\n') { // this is a bad patch - made according to  the program
+          this.writeErrorLog(charSerialNumber - this.chPointer);
+          charSerialNumber = charSerialNumber - this.chPointer + 1;
+        }
         this.chList.remove(0);
         this.chPointer = 0;
       } else {
@@ -90,9 +109,11 @@ public class LexicalAnalyzer {
         this.tokens.add(token);
         System.out.println("token: " + token.toString());
         this.chPointer = 0;
-        this.resetAnalyzer(this.analyzerUsed.getDfaAnalyzerWordType());
+//        this.resetAnalyzer(this.analyzerUsed.getDfaAnalyzerWordType());
       }
     }
+
+    this.errorLogFileWriter.close();
     return this.tokens.getTokensCopy();
   }
 
@@ -122,7 +143,9 @@ public class LexicalAnalyzer {
     } else {
       this.analyzerUsed = this.analyzerMap.get(WordTypes.OP_DL_COM.getType());
     }
-    System.out.println("analyzer status: " + this.analyzerUsed.getState());
+    this.analyzerUsed.reset();
+//    System.out.println("analyzer " + this.analyzerUsed.getDfaAnalyzerWordType()
+//        + "status: " + this.analyzerUsed.getState());
   }
 
   private String convertStateToResult(int analyzerState) {
@@ -157,24 +180,25 @@ public class LexicalAnalyzer {
     try {
       Scanner scanner = new Scanner(new FileInputStream(filePath));
       // read input file and split into characters
+      int line = 0;
+      int charSerialNum = 0;
       while (scanner.hasNext()) {
         char[] lineChar = (scanner.nextLine() + "\n").toCharArray();
         for (int i = 0; i < lineChar.length; i++) {
           this.chList.add(lineChar[i]);
+          this.chLocationMap.put(charSerialNum++, new Location(line, i));
         }
+        line++;
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
+//    System.out.println(this.chLocationMap.toString());
   }
 
-  private void resetAnalyzer(String analyzerType) {
-    this.analyzerMap.get(analyzerType).reset();
+  private void writeErrorLog(int errorCharSerialNumber) {
+    System.out.println("error char serial number: " + errorCharSerialNumber);
+    this.errorLogFileWriter.write(
+        this.chLocationMap.get(errorCharSerialNumber).toString() + "\n");
   }
-
-  private boolean isNonnegativeInteger(String str) {
-    Pattern pattern = Pattern.compile("^[\\+]?[\\d]+$");
-    return pattern.matcher(str).matches();
-  }
-
 }

@@ -24,6 +24,7 @@ public class KeyWord {
       this.add("while");
       this.add("function");
       this.add("call");
+      this.add("return");
     }
   };
 
