@@ -5,10 +5,10 @@ record _rec1 = "(abc)";
 record rec2 = [abc];
 int c = call integerAdd(a, b);
 int hexNum = 0x0ab;
+
 int octNum = 012;
 char ch = '\n';
-boolean ifTrue = 1 && 1;
-
+boolean ifTrue = 1 && 1 ;
 
 /**
  * Add two integers and get the result.
