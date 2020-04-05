@@ -6,9 +6,15 @@ record rec2 = [abc];
 int c = call integerAdd(a, b);
 int hexNum = 0x0ab;
 
+
+while(c < 10){
+	c++;
+}
+
 int octNum = 012;
 char ch = '\n';
-boolean ifTrue = 1 && 1 ;
+boolean ifTrue = 1 && 1;
+
 
 /**
  * Add two integers and get the result.
