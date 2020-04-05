@@ -22,7 +22,7 @@ import data.input.InputFile;
  */
 public class LexicalAnalyzer {
   public static final String errorLogFilePath = "src/test/error.log";
-  public static final String testFilePath = "src/test/testError.code";
+  public static final String testFilePath = "src/test/testError2.code";
 
   public static final String ANALYSIS_ERROR = "analysis error";
   public static final String ANALYSIS_UNFINISHED = "analysis unfinished";
@@ -79,6 +79,9 @@ public class LexicalAnalyzer {
     String analysisResult = "";
     int charSerialNumber = 0;
     while (this.chList.isEmpty() == false) {
+      if (this.chList.size() <= this.chPointer) {
+        break;
+      }
       char ch = this.chList.get(this.chPointer);
 //      System.out.println("(" + ch + ")");
 
