@@ -126,7 +126,8 @@ public class DfaAnalyzer {
       return state_finished;
     }
     Set<String> columnKeySet = this.chToColumn.keySet();
-    String str = this.replaceEscapeChar(ch);
+//    String str = this.replaceEscapeChar(ch);
+    String str = ch + "";
     int column = 0;
     if (columnKeySet.contains(str)) {
       column = this.chToColumn.get(str);
@@ -241,23 +242,6 @@ public class DfaAnalyzer {
     if (!this.chToColumn.keySet().contains("else")) {
       System.out.println("error: DFA table not valid");
       System.exit(1);
-    }
-  }
-
-  /**
-   * Change escape characters into string.
-   * 
-   * @param ch input character
-   * @return changed if ch is escape character; unchanged otherwise
-   */
-  private String replaceEscapeChar(char ch) {
-    switch (ch) {
-      case '\n':
-        return "\\n";
-      case '\t':
-        return "\\t";
-      default:
-        return "" + ch;
     }
   }
 
