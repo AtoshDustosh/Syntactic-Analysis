@@ -22,7 +22,7 @@ import data.input.InputFile;
  */
 public class LexicalAnalyzer {
   public static final String errorLogFilePath = "src/test/error.log";
-  public static final String testFilePath = "src/test/testError2.code";
+  public static final String testFilePath = "src/test/test1.code";
 
   public static final String ANALYSIS_ERROR = "analysis error";
   public static final String ANALYSIS_UNFINISHED = "analysis unfinished";
@@ -112,7 +112,7 @@ public class LexicalAnalyzer {
         this.tokens.add(token);
         System.out.println("token: " + token.toString());
         this.chPointer = 0;
-//        this.resetAnalyzer(this.analyzerUsed.getDfaAnalyzerWordType());
+        this.analyzerUsed.reset();
       }
     }
 

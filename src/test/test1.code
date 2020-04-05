@@ -1,6 +1,7 @@
 int a = 2;
+int number = 12;
 int b = 3;
-double abc = 3;
+double abc = 3.3E-5;
 record _rec1 = "(abc)";
 record rec2 = [abc];
 int c = call integerAdd(a, b);
