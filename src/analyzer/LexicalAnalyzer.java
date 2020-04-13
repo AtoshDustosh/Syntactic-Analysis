@@ -13,6 +13,7 @@ import java.util.Scanner;
 import data.args.KeyWord;
 import data.args.WordTypes;
 import data.input.InputFilePaths;
+import data.output.OutputFilePaths;
 
 /**
  * This class can analyze a program file of specific format and get
@@ -21,8 +22,10 @@ import data.input.InputFilePaths;
  * @author AtoshDustosh
  */
 public class LexicalAnalyzer {
-  public static final String errorLogFilePath = "src/test/error.log";
-  public static final String testFilePath = "src/test/test1.code";
+  public static final String errorLogFilePath = OutputFilePaths.LEXICAL_ERROR_LOG
+      .getFilePath();
+  public static final String testFilePath = InputFilePaths.LEXICAL_TEST_1
+      .getFilePath();
 
   public static final String ANALYSIS_ERROR = "analysis error";
   public static final String ANALYSIS_UNFINISHED = "analysis unfinished";
@@ -43,15 +46,16 @@ public class LexicalAnalyzer {
 
   public LexicalAnalyzer() {
     this.analyzerMap.put(WordTypes.CHAR.getType(), new DfaAnalyzer(
-        WordTypes.CHAR.getType(), InputFilePaths.charDFA.getFilePath()));
+        WordTypes.CHAR.getType(), InputFilePaths.CHAR_DFA.getFilePath()));
     this.analyzerMap.put(WordTypes.NUM.getType(), new DfaAnalyzer(
-        WordTypes.NUM.getType(), InputFilePaths.numDFA.getFilePath()));
+        WordTypes.NUM.getType(), InputFilePaths.NUM_DFA.getFilePath()));
     this.analyzerMap.put(WordTypes.STRING.getType(), new DfaAnalyzer(
-        WordTypes.STRING.getType(), InputFilePaths.stringDFA.getFilePath()));
+        WordTypes.STRING.getType(), InputFilePaths.STRING_DFA.getFilePath()));
     this.analyzerMap.put(WordTypes.IDN.getType(), new DfaAnalyzer(
-        WordTypes.IDN.getType(), InputFilePaths.idnDFA.getFilePath()));
+        WordTypes.IDN.getType(), InputFilePaths.IDN_DFA.getFilePath()));
     this.analyzerMap.put(WordTypes.OP_DL_COM.getType(), new DfaAnalyzer(
-        WordTypes.OP_DL_COM.getType(), InputFilePaths.op_dl_comDFA.getFilePath()));
+        WordTypes.OP_DL_COM.getType(),
+        InputFilePaths.OP_DL_COM_DFA.getFilePath()));
 
     System.out.println(
         this.analyzerMap.get(WordTypes.OP_DL_COM.getType()).getState());
@@ -87,7 +91,6 @@ public class LexicalAnalyzer {
 
       if (this.chPointer == 0 && (ch == ' ' || ch == '\t')) {
         this.chList.remove(0);
-        this.chPointer = 0;
         charSerialNumber++;
         continue;
       }

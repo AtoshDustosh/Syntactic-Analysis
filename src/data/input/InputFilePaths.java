@@ -1,13 +1,14 @@
 package data.input;
 
 public enum InputFilePaths {
-  charDFA("src/data/input/charDFA.format"),
-  idnDFA("src/data/input/idnDFA.format"),
-  numDFA("src/data/input/numDFA.format"),
-  op_dl_comDFA("src/data/input/operator_delimiter_com_DFA.format"),
-  stringDFA("src/data/input/stringDFA.format"),
-  lexicalTest1("src/test/test1.code"),
-  lexicalTestError("src/test/testError.code"),
+  CHAR_DFA("src/data/input/charDFA.format"),
+  IDN_DFA("src/data/input/idnDFA.format"),
+  NUM_DFA("src/data/input/numDFA.format"),
+  OP_DL_COM_DFA("src/data/input/operator_delimiter_com_DFA.format"),
+  STRING_DFA("src/data/input/stringDFA.format"),
+  LEXICAL_TEST_1("src/test/test1.code"),
+  LEXICAL_TEST_ERROR("src/test/testError.code"),
+  WORDSERIALNUMBER("src/data/input/WSnumbers.wsn"),
 
   ;
 

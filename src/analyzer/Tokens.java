@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import data.input.InputFilePaths;
+
 public class Tokens {
-  public static final String wordSerialNumberFilePath = "src/analyzer/CodeList";
+  public static final String wordSerialNumberFilePath = InputFilePaths.WORDSERIALNUMBER
+      .getFilePath();
 
   private List<Token> tokenList = new ArrayList<>();
   BufferedReader br;

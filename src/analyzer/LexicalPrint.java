@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,6 +29,7 @@ public class LexicalPrint extends JFrame {
    */
   public static void main(String[] args) {
     EventQueue.invokeLater(new Runnable() {
+      @Override
       public void run() {
         try {
           LexicalPrint frame = new LexicalPrint();
@@ -43,24 +45,24 @@ public class LexicalPrint extends JFrame {
    * Create the frame.
    */
   public LexicalPrint() {
-    setTitle("\u8BCD\u6CD5\u5206\u6790\u5668");
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setBounds(100, 100, 901, 612);
-    contentPane = new JPanel();
-    contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-    setContentPane(contentPane);
-    contentPane.setLayout(null);
+    this.setTitle("\u8BCD\u6CD5\u5206\u6790\u5668");
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setBounds(100, 100, 901, 612);
+    this.contentPane = new JPanel();
+    this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    this.setContentPane(this.contentPane);
+    this.contentPane.setLayout(null);
 
     JScrollPane scrollPane_1 = new JScrollPane();
     scrollPane_1.setBounds(37, 55, 388, 445);
-    contentPane.add(scrollPane_1);
+    this.contentPane.add(scrollPane_1);
 
     JTextArea textArea_SourceCode = new JTextArea();
     scrollPane_1.setViewportView(textArea_SourceCode);
 
     JScrollPane scrollPane_2 = new JScrollPane();
     scrollPane_2.setBounds(468, 55, 388, 445);
-    contentPane.add(scrollPane_2);
+    this.contentPane.add(scrollPane_2);
 
     JTextArea textArea_Message = new JTextArea();
     scrollPane_2.setViewportView(textArea_Message);
@@ -68,24 +70,26 @@ public class LexicalPrint extends JFrame {
     JLabel lblMessage = new JLabel("\u6253\u5370\u6D88\u606F");
     lblMessage.setFont(new Font("宋体", Font.PLAIN, 20));
     lblMessage.setBounds(622, 16, 108, 29);
-    contentPane.add(lblMessage);
+    this.contentPane.add(lblMessage);
 
     JLabel label_SourceCode = new JLabel("\u6E90\u4EE3\u7801");
     label_SourceCode.setFont(new Font("宋体", Font.PLAIN, 20));
     label_SourceCode.setBounds(201, 16, 108, 29);
-    contentPane.add(label_SourceCode);
+    this.contentPane.add(label_SourceCode);
 
-    JButton btnopen = new JButton("\u6253\u5F00\u6587\u4EF6\u5E76\u751F\u6210Token\u8868");
+    JButton btnopen = new JButton(
+        "\u6253\u5F00\u6587\u4EF6\u5E76\u751F\u6210Token\u8868");
     btnopen.setFont(new Font("楷体", Font.PLAIN, 17));
     btnopen.setBounds(119, 510, 213, 38);
     btnopen.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        OpenFileAndAnalysis(textArea_SourceCode, textArea_Message);
+        LexicalPrint.this.OpenFileAndAnalysis(textArea_SourceCode,
+            textArea_Message);
       }
     });
-    contentPane.add(btnopen);
+    this.contentPane.add(btnopen);
 
     JButton btnsave = new JButton("\u4FDD\u5B58token\u8868");
     btnsave.setFont(new Font("楷体", Font.PLAIN, 17));
@@ -94,16 +98,17 @@ public class LexicalPrint extends JFrame {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        SaveTokens(textArea_Message);
+        LexicalPrint.this.SaveTokens(textArea_Message);
       }
     });
-    contentPane.add(btnsave);
+    this.contentPane.add(btnsave);
   }
 
   /**
    * Open the code file and analyze it.尚需填充
    */
-  private void OpenFileAndAnalysis(JTextArea textArea_SourceCode, JTextArea textArea_Tokens) {
+  private void OpenFileAndAnalysis(JTextArea textArea_SourceCode,
+      JTextArea textArea_Tokens) {
     try {
       JFrame f = new JFrame("my window");// 创建窗体对象
       f.setBounds(300, 100, 650, 600);// 设置窗体位置和大小
@@ -133,19 +138,18 @@ public class LexicalPrint extends JFrame {
       String line;
       File file = new File(dirpath, fileName);
       BufferedReader br = new BufferedReader(new FileReader(file));// 文件指针
-      while ((line = br.readLine()) != null)
+      while ((line = br.readLine()) != null) {
         textArea_SourceCode.append(line + "\n");
-
+      }
 
       LexicalAnalyzer la = new LexicalAnalyzer();
       Tokens tokenPrint = la.analyzeFile(dirpath + fileName);// The new Token object modifies the //
                                                              // initialization statement // if the
-      // program requires it, but does not change the // quantity name
-
-
+                                                             // program requires it, but does not change the // quantity name
 
       for (Token tk : tokenPrint.getTokenListCopy()) {
-        String tkline = "<" + tk.getWordSerialNumber() + "，" + tk.getWordValue() + ">" + "\n";
+        String tkline = "<" + tk.getWordSerialNumber() + "，" + tk.getWordValue()
+            + ">" + "\n";
         textArea_Tokens.append(tkline);
       }
       br.close();
@@ -169,9 +173,9 @@ public class LexicalPrint extends JFrame {
     String dirpath = saveDia.getDirectory();// 获取保存文件路径并保存到字符串中。
     String fileName = saveDia.getFile();//// 获取打保存文件名称并保存到字符串中
     File file = null;
-    if (dirpath == null || fileName == null)// 判断路径和文件是否为空
+    if (dirpath == null || fileName == null) {
       return;// 空操作
-    else {
+    } else {
       file = new File(dirpath, fileName);// 文件不为空，新建一个路径和名称
     }
 
@@ -185,8 +189,6 @@ public class LexicalPrint extends JFrame {
       // 抛出IO异常
       e1.printStackTrace();
     }
-
-
 
   }
 }

@@ -44,7 +44,7 @@ public class DfaAnalyzer {
      * Test
      */
     DfaAnalyzer analyzer = new DfaAnalyzer(WordTypes.CHAR.getType(),
-        InputFilePaths.charDFA.getFilePath());
+        InputFilePaths.CHAR_DFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('\''));
     System.out.println(analyzer.enterNextState('a'));
@@ -53,7 +53,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.NUM.getType(),
-        InputFilePaths.numDFA.getFilePath());
+        InputFilePaths.NUM_DFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('1'));
     System.out.println(analyzer.enterNextState('.'));
@@ -64,7 +64,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.STRING.getType(),
-        InputFilePaths.stringDFA.getFilePath());
+        InputFilePaths.STRING_DFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('\"'));
     System.out.println(analyzer.enterNextState('\\'));
@@ -75,7 +75,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.IDN.getType(),
-        InputFilePaths.idnDFA.getFilePath());
+        InputFilePaths.IDN_DFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('_'));
     System.out.println(analyzer.enterNextState('1'));
@@ -86,7 +86,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.OP_DL_COM.getType(),
-        InputFilePaths.op_dl_comDFA.getFilePath());
+        InputFilePaths.OP_DL_COM_DFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('/'));
     System.out.println(analyzer.enterNextState('*'));
@@ -126,7 +126,6 @@ public class DfaAnalyzer {
       return state_finished;
     }
     Set<String> columnKeySet = this.chToColumn.keySet();
-//    String str = this.replaceEscapeChar(ch);
     String str = ch + "";
     int column = 0;
     if (columnKeySet.contains(str)) {
@@ -134,7 +133,7 @@ public class DfaAnalyzer {
     } else {
       column = this.chToColumn.get("else");
     }
-//    System.out.println("ch: " + str + " ~ " + column);
+
     List<String> rowList = this.statesRow.get(this.presentState - 1);
     String entry = rowList.get(column);
 //    System.out.println("entry: " + entry);
