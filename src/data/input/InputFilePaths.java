@@ -1,17 +1,19 @@
 package data.input;
 
-public enum InputFile {
+public enum InputFilePaths {
   charDFA("src/data/input/charDFA.format"),
   idnDFA("src/data/input/idnDFA.format"),
   numDFA("src/data/input/numDFA.format"),
   op_dl_comDFA("src/data/input/operator_delimiter_com_DFA.format"),
   stringDFA("src/data/input/stringDFA.format"),
+  lexicalTest1("src/test/test1.code"),
+  lexicalTestError("src/test/testError.code"),
 
   ;
 
   private String filePath = null;
 
-  private InputFile(String filePath) {
+  private InputFilePaths(String filePath) {
     this.filePath = filePath;
   }
 

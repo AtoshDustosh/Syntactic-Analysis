@@ -1,1 +1,1 @@
-# Lexical-Analyis
+# Syntactic-Analyis

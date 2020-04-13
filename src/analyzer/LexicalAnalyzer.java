@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 import data.args.KeyWord;
 import data.args.WordTypes;
-import data.input.InputFile;
+import data.input.InputFilePaths;
 
 /**
  * This class can analyze a program file of specific format and get
@@ -43,15 +43,15 @@ public class LexicalAnalyzer {
 
   public LexicalAnalyzer() {
     this.analyzerMap.put(WordTypes.CHAR.getType(), new DfaAnalyzer(
-        WordTypes.CHAR.getType(), InputFile.charDFA.getFilePath()));
+        WordTypes.CHAR.getType(), InputFilePaths.charDFA.getFilePath()));
     this.analyzerMap.put(WordTypes.NUM.getType(), new DfaAnalyzer(
-        WordTypes.NUM.getType(), InputFile.numDFA.getFilePath()));
+        WordTypes.NUM.getType(), InputFilePaths.numDFA.getFilePath()));
     this.analyzerMap.put(WordTypes.STRING.getType(), new DfaAnalyzer(
-        WordTypes.STRING.getType(), InputFile.stringDFA.getFilePath()));
+        WordTypes.STRING.getType(), InputFilePaths.stringDFA.getFilePath()));
     this.analyzerMap.put(WordTypes.IDN.getType(), new DfaAnalyzer(
-        WordTypes.IDN.getType(), InputFile.idnDFA.getFilePath()));
+        WordTypes.IDN.getType(), InputFilePaths.idnDFA.getFilePath()));
     this.analyzerMap.put(WordTypes.OP_DL_COM.getType(), new DfaAnalyzer(
-        WordTypes.OP_DL_COM.getType(), InputFile.op_dl_comDFA.getFilePath()));
+        WordTypes.OP_DL_COM.getType(), InputFilePaths.op_dl_comDFA.getFilePath()));
 
     System.out.println(
         this.analyzerMap.get(WordTypes.OP_DL_COM.getType()).getState());

@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import data.args.WordTypes;
-import data.input.InputFile;
+import data.input.InputFilePaths;
 
 /**
  * This class loads a DFA table from an input file and change state
@@ -44,7 +44,7 @@ public class DfaAnalyzer {
      * Test
      */
     DfaAnalyzer analyzer = new DfaAnalyzer(WordTypes.CHAR.getType(),
-        InputFile.charDFA.getFilePath());
+        InputFilePaths.charDFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('\''));
     System.out.println(analyzer.enterNextState('a'));
@@ -53,7 +53,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.NUM.getType(),
-        InputFile.numDFA.getFilePath());
+        InputFilePaths.numDFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('1'));
     System.out.println(analyzer.enterNextState('.'));
@@ -64,7 +64,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.STRING.getType(),
-        InputFile.stringDFA.getFilePath());
+        InputFilePaths.stringDFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('\"'));
     System.out.println(analyzer.enterNextState('\\'));
@@ -75,7 +75,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.IDN.getType(),
-        InputFile.idnDFA.getFilePath());
+        InputFilePaths.idnDFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('_'));
     System.out.println(analyzer.enterNextState('1'));
@@ -86,7 +86,7 @@ public class DfaAnalyzer {
     System.out.println(analyzer.getAnalyzedWordType());
 
     analyzer.rebuildAnalyzer(WordTypes.OP_DL_COM.getType(),
-        InputFile.op_dl_comDFA.getFilePath());
+        InputFilePaths.op_dl_comDFA.getFilePath());
     analyzer.printDfaTable();
     System.out.println(analyzer.enterNextState('/'));
     System.out.println(analyzer.enterNextState('*'));
