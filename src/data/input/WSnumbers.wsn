@@ -5,7 +5,7 @@ HEX 4
 DOUBLE 5
 CHAR 6
 STRING 7
-ANNOTATION 8
+COM 8
 int 9
 double 10
 boolean 11

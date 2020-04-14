@@ -126,6 +126,7 @@ public class Tokens {
         int num = Integer.parseInt(array_type_num[1]);
         this.type_SerialNum.put(type, num);
       }
+      this.br.close();
     } catch (Exception e) {
       e.printStackTrace();
     }

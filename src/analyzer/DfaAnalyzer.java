@@ -235,6 +235,7 @@ public class DfaAnalyzer {
       } else {
         System.out.println("error: input file not valid.");
       }
+      scanner.close();
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
