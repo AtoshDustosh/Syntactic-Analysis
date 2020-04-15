@@ -22,6 +22,17 @@ public class Production {
     this.parseGrammarSymbolList(symbolList);
   }
 
+  public Production(GrammarSymbol leftHandSide,
+      List<GrammarSymbol> rightHandSide) {
+    this.leftHandSide = leftHandSide;
+    this.rightHandSide = rightHandSide;
+  }
+
+  public Production(Production production) {
+    this.leftHandSide = production.getLHS();
+    this.rightHandSide = production.getRHS();
+  }
+
   public static void main(String[] args) {
     List<GrammarSymbol> symbolList = new ArrayList<>();
     symbolList.add(new GrammarSymbol("A"));
@@ -62,6 +73,17 @@ public class Production {
       str = str + "\n" + this.rightHandSide.get(i).toString();
     }
     return str;
+  }
+
+  public boolean equals(Production production) {
+    GrammarSymbol LHS = production.getLHS();
+    List<GrammarSymbol> RHS = production.getRHS();
+    boolean result = LHS.equals(this.leftHandSide);
+    result = result && (RHS.size() == this.rightHandSide.size());
+    for (int i = 0; i < RHS.size(); i++) {
+      result = result && (RHS.get(i).equals(this.rightHandSide.get(i)));
+    }
+    return result;
   }
 
   private void parseGrammarSymbolList(List<GrammarSymbol> symbolList) {

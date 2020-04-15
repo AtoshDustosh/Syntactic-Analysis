@@ -64,6 +64,15 @@ public class GrammarSymbol {
     return str;
   }
 
+  public boolean equals(GrammarSymbol symbol) {
+    if (this.symbolStr.equals(symbol.getString())
+        && this.symbolType.equals(symbol.getType())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   private boolean isNonterminalSymbol(String str) {
     Pattern p = Pattern.compile("([A-Z]|_|[0-9])+");
     Matcher m = p.matcher(str);
