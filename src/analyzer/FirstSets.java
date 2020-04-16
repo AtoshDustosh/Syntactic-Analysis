@@ -64,11 +64,11 @@ public class FirstSets {
   }
 
   /**
-   * Add a new FIRST set (nonterminal, list of terminals) into the
+   * Add a new First set (nonterminal, list of terminals) into the
    * database.
    * 
    * @param nonterminal  nonterminal grammar symbol
-   * @param terminalList terminals in the FIRST set of the nonterminal
+   * @param terminalList terminals in the First set of the nonterminal
    * @return true if modified; false otherwise
    */
   public boolean addFirstSet(GrammarSymbol nonterminal,

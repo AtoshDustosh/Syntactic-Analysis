@@ -19,6 +19,8 @@ public class PredictiveParsingTableConstructor {
   private boolean selectSetBuilt = false;
   private SelectSets selectSets = new SelectSets();
 
+  private int debug = 0;
+
   public PredictiveParsingTableConstructor() {
 
   }
@@ -74,20 +76,30 @@ public class PredictiveParsingTableConstructor {
     this.firstSetBuilt = true;
   }
 
+  /**
+   * Recursively build the first set of productions.
+   * 
+   * @param production
+   * @param finished   a map from the string of left hand side symbol of
+   *                   the production to the boolean whether the first
+   *                   set of this LHS symbol is built.
+   */
   private void recursiveBuildFirstSet(Production production,
       Map<String, Boolean> finished) {
 //    System.out.println("select production - " + production.toString());
     GrammarSymbol LHS = production.getLHS();
     List<List<GrammarSymbol>> rhsList = production.getRHSlist();
-    // process all RHS of a production
+    // process all RHS of a production one by one
     for (int i = 0; i < rhsList.size(); i++) {
       List<GrammarSymbol> RHS = rhsList.get(i);
       int emptyCount = 0;
-      // process all GrammarSymbol of an RHS
+      // process all GrammarSymbol of an RHS one by one
       for (int j = 0; j < RHS.size(); j++) {
         GrammarSymbol symbol = RHS.get(j);
 //        System.out.println("process symbol: " + symbol);
-        if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
+        if (symbol.equals(LHS)) {
+          break;
+        } else if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
           this.firstSets.addFirstSet(LHS,
               new ArrayList<>(Arrays.asList(symbol)));
           if (symbol.equals(new GrammarSymbol("empty"))) {
@@ -104,6 +116,8 @@ public class PredictiveParsingTableConstructor {
             }
             if (this.listContains(newFirstSet, new GrammarSymbol("empty"))) {
               emptyCount++;
+            } else {
+              break;
             }
           } else {
             Production newPro = this.productions.getProduction(symbol);
