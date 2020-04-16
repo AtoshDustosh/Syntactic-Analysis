@@ -60,6 +60,25 @@ public class Productions {
 //    this.breakProductionsIntoPieces();
   }
 
+  /**
+   * Break all those production that has "or" in them into pieces and
+   * put the pieces and those productions not broken into another
+   * instance of Productions.
+   * 
+   * @return an instance of piece-broken Production for this instance
+   */
+  public Productions breakIntoPieces() {
+    List<Production> brokenProductions = new ArrayList<>();
+    for (int i = 0; i < this.productionList.size(); i++) {
+      Production production = this.productionList.get(i);
+      List<Production> pieces = production.breakIntoPieces();
+      for (int k = 0; k < pieces.size(); k++) {
+        brokenProductions.add(pieces.get(k));
+      }
+    }
+    return new Productions(brokenProductions);
+  }
+
   @Override
   public String toString() {
     String str = "";
@@ -105,5 +124,36 @@ public class Productions {
       symbolList.add(new GrammarSymbol(strArray[i]));
     }
     return symbolList;
+  }
+
+  /**
+   * Integerate several productions into one production. Note that these
+   * productions must have the same LHS.
+   * 
+   * @param list list of productions
+   * @return integerated production if successful; empty production
+   *         otherwise
+   */
+  private Production integerateProductions(List<Production> list) {
+    // why did I write this function???
+    Production integerated = new Production();
+    boolean canDoIntegeration = true;
+
+    GrammarSymbol LHS = list.get(0).getLHS();
+    for (int i = 0; i < list.size(); i++) {
+      canDoIntegeration = canDoIntegeration
+          && LHS.equals(list.get(i).getLHS());
+    }
+    if (canDoIntegeration == false) {
+      return integerated;
+    }
+    integerated.setLHS(LHS);
+    for (int i = 0; i < list.size(); i++) {
+      List<List<GrammarSymbol>> rhsList = list.get(i).getRHSlist();
+      for (int j = 0; j < rhsList.size(); j++) {
+        integerated.addNewRHS(rhsList.get(j));
+      }
+    }
+    return integerated;
   }
 }

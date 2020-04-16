@@ -1,8 +1,9 @@
 package analyzer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Store the First sets of a series of nonterminals. The First sets
@@ -12,8 +13,7 @@ import java.util.List;
  */
 public class FirstSets {
 
-  private List<GrammarSymbol> nonterminalList = new ArrayList<>();
-  private List<List<GrammarSymbol>> terminalsList = new ArrayList<>();
+  private Map<GrammarSymbol, Set<GrammarSymbol>> firstSetMap = new HashMap<>();
 
   public FirstSets() {
 
@@ -21,32 +21,32 @@ public class FirstSets {
 
   public static void main(String[] args) {
     FirstSets test = new FirstSets();
-    List<GrammarSymbol> list = new ArrayList<>();
+    Set<GrammarSymbol> set = new HashSet<>();
     GrammarSymbol s1 = new GrammarSymbol("A");
     GrammarSymbol s2 = new GrammarSymbol("A");
     GrammarSymbol s3 = new GrammarSymbol("A");
 
-    list.clear();
-    list.add(new GrammarSymbol("a"));
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("b"));
-    System.out.println("modified: " + test.addFirstSet(s1, list));
+    set.clear();
+    set.add(new GrammarSymbol("a"));
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("b"));
+    System.out.println("modified: " + test.addFirstSet(s1, set));
 
     System.out.println(test.toString());
 
-    list.clear();
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("c"));
-    System.out.println("modified: " + test.addFirstSet(s2, list));
+    set.clear();
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("c"));
+    System.out.println("modified: " + test.addFirstSet(s2, set));
 
     System.out.println(test.toString());
 
-    list.clear();
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("c"));
-    list.add(new GrammarSymbol("c"));
-    System.out.println("modified: " + test.addFirstSet(s3, list));
+    set.clear();
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("c"));
+    set.add(new GrammarSymbol("c"));
+    System.out.println("modified: " + test.addFirstSet(s3, set));
 
     System.out.println(test.toString());
 
@@ -73,45 +73,26 @@ public class FirstSets {
    * @return true if modified; false otherwise
    */
   public boolean addFirstSet(GrammarSymbol nonterminal,
-      List<GrammarSymbol> terminalList) {
+      Set<GrammarSymbol> terminalSet) {
     boolean modified = false;
-    List<GrammarSymbol> oldTerminalsList = new ArrayList<>();
-    int oldNonterminalIndex = -1;
-    terminalList = this.removeRepeatedSymbol(terminalList);
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      if (this.nonterminalList.get(i).equals(nonterminal)) {
-        oldNonterminalIndex = i;
-        oldTerminalsList = this.terminalsList.get(oldNonterminalIndex);
-        break;
-      }
-    }
-    if (oldNonterminalIndex == -1) {
-      oldNonterminalIndex = this.nonterminalList.size();
-      this.nonterminalList.add(nonterminal);
-      this.terminalsList.add(new ArrayList<>());
-    }
-    for (int i = 0; i < terminalList.size(); i++) {
-      boolean alreadyHas = false;
-      for (int j = 0; j < oldTerminalsList.size(); j++) {
-        GrammarSymbol oldSymbol = oldTerminalsList.get(j);
-        GrammarSymbol newSymbol = terminalList.get(i);
-        alreadyHas = alreadyHas || oldSymbol.equals(newSymbol);
-
-//        System.out.println(newSymbol + " _ " + oldSymbol + " ~ "
-//            + oldSymbol.equals(newSymbol) + " -> " + alreadyHas);
-      }
-      if (alreadyHas == false) {
-        this.terminalsList.get(oldNonterminalIndex).add(terminalList.get(i));
+    if (this.firstSetMap.containsKey(nonterminal)) {
+      Set<GrammarSymbol> oldSet = this.firstSetMap.get(nonterminal);
+      if (oldSet.containsAll(terminalSet) == false) {
+        oldSet.addAll(terminalSet);
         modified = true;
       }
+    } else {
+      this.firstSetMap.put(nonterminal, terminalSet);
+      modified = true;
     }
     return modified;
   }
 
   public boolean addFirstSet(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
-    return this.addFirstSet(nonterminal,
-        new ArrayList<>(Arrays.asList(terminal)));
+    Set<GrammarSymbol> tempSet = new HashSet<>();
+    tempSet.add(terminal);
+    return this.addFirstSet(nonterminal, tempSet);
   }
 
   /**
@@ -126,82 +107,42 @@ public class FirstSets {
   public boolean removeFirstSetItem(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
     boolean modified = false;
-    int nonterminalIndex = -1;
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol tempNonterminal = this.nonterminalList.get(i);
-      if (tempNonterminal.equals(nonterminal)) {
-        nonterminalIndex = i;
-        break;
-      }
-    }
-    if (nonterminalIndex == -1) {
-      return modified;
-    } else {
-      List<GrammarSymbol> terminalList = this.terminalsList
-          .get(nonterminalIndex);
-      for (int i = 0; i < terminalList.size(); i++) {
-        GrammarSymbol tempTerminal = terminalList.get(i);
-        if (tempTerminal.equals(terminal)) {
-          this.terminalsList.get(nonterminalIndex).remove(i);
-          modified = true;
-          break;
-        }
-      }
-    }
+    Set<GrammarSymbol> oldSet = this.firstSetMap.get(nonterminal);
+    modified = oldSet.remove(terminal);
     return modified;
   }
 
-  public List<GrammarSymbol> getTerminalList(GrammarSymbol symbol) {
-    if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL) == false) {
-      return new ArrayList<>();
+  public Set<GrammarSymbol> getTerminalSet(GrammarSymbol symbol) {
+    Set<GrammarSymbol> oldSet = this.firstSetMap.get(symbol);
+    if (oldSet == null) {
+      return new HashSet<>();
+    } else {
+      return new HashSet<>(oldSet);
     }
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol nonterminal = this.nonterminalList.get(i);
-      if (nonterminal.equals(symbol)) {
-        return new ArrayList<>(this.terminalsList.get(i));
-      }
-    }
-    return new ArrayList<>();
   }
 
   public boolean ifHasTerminal(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
-    int nonterminalIndex = -1;
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol temp = this.nonterminalList.get(i);
-      if (temp.equals(nonterminal)) {
-        nonterminalIndex = i;
-        break;
-      }
-    }
-    if (nonterminalIndex == -1) {
+    Set<GrammarSymbol> oldSet = this.firstSetMap.get(nonterminal);
+    if (oldSet == null) {
       return false;
-    } else {
-      List<GrammarSymbol> terminals = this.terminalsList.get(nonterminalIndex);
-      for (int i = 0; i < terminals.size(); i++) {
-        GrammarSymbol temp = terminals.get(i);
-        if (temp.equals(terminal)) {
-          return true;
-        }
-      }
     }
-    return false;
+    if (oldSet.contains(terminal)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public boolean ifHasNonterminal(GrammarSymbol nonterminal) {
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol temp = this.nonterminalList.get(i);
-      if (temp.equals(nonterminal)) {
-        return true;
-      }
-    }
-    return false;
+    return this.firstSetMap.containsKey(nonterminal);
   }
 
   public FirstSets copy() {
     FirstSets copy = new FirstSets();
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      copy.addFirstSet(this.nonterminalList.get(i), this.terminalsList.get(i));
+    for (GrammarSymbol gS : this.firstSetMap.keySet()) {
+      Set<GrammarSymbol> symbolSet = this.firstSetMap.get(gS);
+      copy.addFirstSet(gS, symbolSet);
     }
     return copy;
   }
@@ -209,27 +150,10 @@ public class FirstSets {
   @Override
   public String toString() {
     String str = "";
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      str = str + this.nonterminalList.get(i).toString() + " - "
-          + this.terminalsList.get(i).toString() + "\n";
+    for (GrammarSymbol gS : this.firstSetMap.keySet()) {
+      Set<GrammarSymbol> symbolSet = this.firstSetMap.get(gS);
+      str = str + gS.toString() + " -> " + symbolSet.toString() + "\n";
     }
     return str;
-  }
-
-  private List<GrammarSymbol> removeRepeatedSymbol(List<GrammarSymbol> list) {
-    List<GrammarSymbol> newList = new ArrayList<>();
-    for (int i = 0; i < list.size(); i++) {
-      boolean repeated = false;
-      GrammarSymbol newSymbol = list.get(i);
-      for (int j = 0; j < newList.size(); j++) {
-        if (newList.get(j).equals(newSymbol)) {
-          repeated = true;
-        }
-      }
-      if (repeated == false) {
-        newList.add(newSymbol);
-      }
-    }
-    return newList;
   }
 }

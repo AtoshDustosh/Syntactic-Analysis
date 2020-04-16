@@ -1,6 +1,7 @@
 package analyzer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,10 +64,44 @@ public class Production {
     return rhs;
   }
 
+  /**
+   * Add a new RHS into the production.
+   * 
+   * @param newRHS new RHS
+   * @return true if added successfully (no repetition) ; false
+   *         otherwise
+   */
+  public boolean addNewRHS(List<GrammarSymbol> newRHS) {
+    for (int i = 0; i < this.rightHandSide.size(); i++) {
+      if (newRHS.equals(this.rightHandSide.get(i))) {
+        return false;
+      }
+    }
+    this.rightHandSide.add(newRHS);
+    return true;
+  }
+
+  public void setLHS(GrammarSymbol LHS) {
+    this.leftHandSide = new GrammarSymbol(LHS);
+  }
+
+  public List<Production> breakIntoPieces() {
+    List<Production> pieces = new ArrayList<>();
+    for (int i = 0; i < this.rightHandSide.size(); i++) {
+      List<GrammarSymbol> piecedRHS = new ArrayList<>(
+          this.rightHandSide.get(i));
+      List<List<GrammarSymbol>> newRHS = new ArrayList<>(
+          Arrays.asList(piecedRHS));
+      Production piece = new Production(this.leftHandSide, newRHS);
+      pieces.add(piece);
+    }
+    return pieces;
+  }
+
   @Override
   public String toString() {
     String str = "";
-    str = str + this.leftHandSide.getString() + " ->";
+    str = str + this.leftHandSide.getName() + " ->";
     for (int i = 0; i < this.rightHandSide.size(); i++) {
       String rhsPiece = "";
       List<GrammarSymbol> productionPiece = this.rightHandSide.get(i);
@@ -91,10 +126,10 @@ public class Production {
       return false;
     }
     for (int i = 0; i < RHS.size(); i++) {
+      List<GrammarSymbol> thatList = RHS.get(i);
       for (int j = 0; j < RHS.get(i).size(); j++) {
-        GrammarSymbol thisSymbol = this.rightHandSide.get(i).get(j);
-        GrammarSymbol thatSymbol = RHS.get(i).get(j);
-        result = result && (thisSymbol.equals(thatSymbol));
+        List<GrammarSymbol> thisList = this.rightHandSide.get(j);
+        result = result && (thatList.equals(thisList));
       }
     }
     return result;
@@ -127,7 +162,7 @@ public class Production {
       return false;
     }
     if (symbolList.get(0).isTerminalSymbol()
-        || symbolList.get(1).getString().equals(DERIVATION_SYMBOL) == false) {
+        || symbolList.get(1).getName().equals(DERIVATION_SYMBOL) == false) {
       System.out
           .println("error: production invalid - first grammar symbol invalid");
       System.out.println(symbolList.get(0).toString());

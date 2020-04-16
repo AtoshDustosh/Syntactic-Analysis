@@ -2,12 +2,15 @@ package analyzer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FollowSets {
 
-  private List<GrammarSymbol> nonterminalList = new ArrayList<>();
-  private List<List<GrammarSymbol>> terminalsList = new ArrayList<>();
+  private Map<GrammarSymbol, Set<GrammarSymbol>> followSetMap = new HashMap<>();
 
   public FollowSets() {
 
@@ -69,35 +72,19 @@ public class FollowSets {
   public boolean addFollowSet(GrammarSymbol nonterminal,
       List<GrammarSymbol> terminalList) {
     boolean modified = false;
-    List<GrammarSymbol> oldTerminalsList = new ArrayList<>();
-    int oldNonterminalIndex = -1;
-    terminalList = this.removeRepeatedSymbol(terminalList);
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      if (this.nonterminalList.get(i).equals(nonterminal)) {
-        oldNonterminalIndex = i;
-        oldTerminalsList = this.terminalsList.get(oldNonterminalIndex);
-        break;
-      }
-    }
-    if (oldNonterminalIndex == -1) {
-      oldNonterminalIndex = this.nonterminalList.size();
-      this.nonterminalList.add(nonterminal);
-      this.terminalsList.add(new ArrayList<>());
-    }
+    Set<GrammarSymbol> terminalSet = new HashSet<>();
     for (int i = 0; i < terminalList.size(); i++) {
-      boolean alreadyHas = false;
-      for (int j = 0; j < oldTerminalsList.size(); j++) {
-        GrammarSymbol oldSymbol = oldTerminalsList.get(j);
-        GrammarSymbol newSymbol = terminalList.get(i);
-        alreadyHas = alreadyHas || oldSymbol.equals(newSymbol);
-
-//        System.out.println(newSymbol + " _ " + oldSymbol + " ~ "
-//            + oldSymbol.equals(newSymbol) + " -> " + alreadyHas);
-      }
-      if (alreadyHas == false) {
-        this.terminalsList.get(oldNonterminalIndex).add(terminalList.get(i));
+      terminalSet.add(terminalList.get(i));
+    }
+    if (this.followSetMap.containsKey(nonterminal)) {
+      Set<GrammarSymbol> oldSet = this.followSetMap.get(nonterminal);
+      if (oldSet.containsAll(terminalSet) == false) {
+        oldSet.addAll(terminalSet);
         modified = true;
       }
+    } else {
+      this.followSetMap.put(nonterminal, terminalSet);
+      modified = true;
     }
     return modified;
   }
@@ -120,89 +107,47 @@ public class FollowSets {
   public boolean removeFollowSetItem(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
     boolean modified = false;
-    int nonterminalIndex = -1;
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol tempNonterminal = this.nonterminalList.get(i);
-      if (tempNonterminal.equals(nonterminal)) {
-        nonterminalIndex = i;
-        break;
-      }
-    }
-    if (nonterminalIndex == -1) {
-      return modified;
-    } else {
-      List<GrammarSymbol> terminalList = this.terminalsList
-          .get(nonterminalIndex);
-      for (int i = 0; i < terminalList.size(); i++) {
-        GrammarSymbol tempTerminal = terminalList.get(i);
-        if (tempTerminal.equals(terminal)) {
-          this.terminalsList.get(nonterminalIndex).remove(i);
-          modified = true;
-          break;
-        }
-      }
-    }
+    Set<GrammarSymbol> oldSet = this.followSetMap.get(nonterminal);
+    modified = oldSet.remove(terminal);
     return modified;
   }
 
-  /**
-   * Get the list of terminals (Follow Set) corresponding to the
-   * nonterminal grammar symbol.
-   * 
-   * @param symbol a nonterminal grammar symbol
-   * @return list of terminals (which is the Follow set)
-   */
   public List<GrammarSymbol> getTerminalList(GrammarSymbol symbol) {
-    if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL) == false) {
-      return new ArrayList<>();
+    Set<GrammarSymbol> oldSet = this.followSetMap.get(symbol);
+    List<GrammarSymbol> symbolList = new ArrayList<>();
+    if (oldSet == null) {
+      return symbolList;
     }
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol nonterminal = this.nonterminalList.get(i);
-      if (nonterminal.equals(symbol)) {
-        return new ArrayList<>(this.terminalsList.get(i));
-      }
+    for (GrammarSymbol gS : oldSet) {
+      symbolList.add(new GrammarSymbol(gS));
     }
-    return new ArrayList<>();
+    return symbolList;
   }
 
   public boolean ifHasTerminal(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
-    int nonterminalIndex = -1;
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol temp = this.nonterminalList.get(i);
-      if (temp.equals(nonterminal)) {
-        nonterminalIndex = i;
-        break;
-      }
-    }
-    if (nonterminalIndex == -1) {
+    Set<GrammarSymbol> oldSet = this.followSetMap.get(nonterminal);
+    if (oldSet == null) {
       return false;
-    } else {
-      List<GrammarSymbol> terminals = this.terminalsList.get(nonterminalIndex);
-      for (int i = 0; i < terminals.size(); i++) {
-        GrammarSymbol temp = terminals.get(i);
-        if (temp.equals(terminal)) {
-          return true;
-        }
-      }
     }
-    return false;
+    if (oldSet.contains(terminal)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public boolean ifHasNonterminal(GrammarSymbol nonterminal) {
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      GrammarSymbol temp = this.nonterminalList.get(i);
-      if (temp.equals(nonterminal)) {
-        return true;
-      }
-    }
-    return false;
+    return this.followSetMap.containsKey(nonterminal);
   }
 
   public FollowSets copy() {
     FollowSets copy = new FollowSets();
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      copy.addFollowSet(this.nonterminalList.get(i), this.terminalsList.get(i));
+    for (GrammarSymbol gS : this.followSetMap.keySet()) {
+      List<GrammarSymbol> symbolList = new ArrayList<>();
+      Set<GrammarSymbol> symbolSet = this.followSetMap.get(gS);
+      symbolList.addAll(symbolSet);
+      copy.addFollowSet(gS, new ArrayList<>(symbolSet));
     }
     return copy;
   }
@@ -210,27 +155,10 @@ public class FollowSets {
   @Override
   public String toString() {
     String str = "";
-    for (int i = 0; i < this.nonterminalList.size(); i++) {
-      str = str + this.nonterminalList.get(i).toString() + " - "
-          + this.terminalsList.get(i).toString() + "\n";
+    for (GrammarSymbol gS : this.followSetMap.keySet()) {
+      Set<GrammarSymbol> symbolSet = this.followSetMap.get(gS);
+      str = str + gS.toString() + " -> " + symbolSet.toString() + "\n";
     }
     return str;
-  }
-
-  private List<GrammarSymbol> removeRepeatedSymbol(List<GrammarSymbol> list) {
-    List<GrammarSymbol> newList = new ArrayList<>();
-    for (int i = 0; i < list.size(); i++) {
-      boolean repeated = false;
-      GrammarSymbol newSymbol = list.get(i);
-      for (int j = 0; j < newList.size(); j++) {
-        if (newList.get(j).equals(newSymbol)) {
-          repeated = true;
-        }
-      }
-      if (repeated == false) {
-        newList.add(newSymbol);
-      }
-    }
-    return newList;
   }
 }

@@ -1,10 +1,10 @@
 package analyzer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import data.input.InputFilePaths;
 
@@ -47,6 +47,8 @@ public class PredictiveParsingTableConstructor {
   public void loadProductions(Productions productions) {
     this.productions = productions;
     this.buildFirstSets();
+    this.buildFollowSets();
+    this.buildSelectSets();
     /*
      * TODO add construction of FollowSets and SelectSets
      */
@@ -79,7 +81,7 @@ public class PredictiveParsingTableConstructor {
   /**
    * Recursively build the first set of productions.
    * 
-   * @param production
+   * @param production production whose first set is to be built
    * @param finished   a map from the string of left hand side symbol of
    *                   the production to the boolean whether the first
    *                   set of this LHS symbol is built.
@@ -100,8 +102,9 @@ public class PredictiveParsingTableConstructor {
         if (symbol.equals(LHS)) {
           break;
         } else if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
-          this.firstSets.addFirstSet(LHS,
-              new ArrayList<>(Arrays.asList(symbol)));
+          Set<GrammarSymbol> tempSet = new HashSet<>();
+          tempSet.add(symbol);
+          this.firstSets.addFirstSet(LHS, tempSet);
           if (symbol.equals(new GrammarSymbol("empty"))) {
             emptyCount++;
           }
@@ -109,12 +112,12 @@ public class PredictiveParsingTableConstructor {
         } else if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
           boolean ifFirstSetFinished = finished.get(symbol.toString());
           if (ifFirstSetFinished) {
-            List<GrammarSymbol> newFirstSet = this.firstSets
-                .getTerminalList(symbol);
+            Set<GrammarSymbol> newFirstSet = this.firstSets
+                .getTerminalSet(symbol);
             if (emptyCount == j) {
               this.firstSets.addFirstSet(LHS, newFirstSet);
             }
-            if (this.listContains(newFirstSet, new GrammarSymbol("empty"))) {
+            if (newFirstSet.contains(new GrammarSymbol("empty"))) {
               emptyCount++;
             } else {
               break;
@@ -130,8 +133,9 @@ public class PredictiveParsingTableConstructor {
         }
       } // end of loop (j)
       if (emptyCount == RHS.size()) {
-        this.firstSets.addFirstSet(LHS,
-            new ArrayList<>(Arrays.asList(new GrammarSymbol("empty"))));
+        Set<GrammarSymbol> tempSet = new HashSet<>();
+        tempSet.add(new GrammarSymbol("empty"));
+        this.firstSets.addFirstSet(LHS, tempSet);
       } else {
         this.firstSets.removeFirstSetItem(LHS, new GrammarSymbol("empty"));
       }
@@ -144,7 +148,9 @@ public class PredictiveParsingTableConstructor {
     if (this.firstSetBuilt == false) {
       this.buildFirstSets();
     }
-
+    /*
+     * TODO
+     */
     this.followSetBuilt = true;
   }
 
@@ -152,25 +158,42 @@ public class PredictiveParsingTableConstructor {
     if (this.followSetBuilt == false) {
       this.buildFollowSets();
     }
-
+    /*
+     * TODO
+     */
     this.selectSetBuilt = true;
   }
 
   /**
-   * Check whether a list of GrammarSymbol contains a specific
-   * GrammarSymbol.
+   * Calculate the First set of a list of grammar symbols.
    * 
-   * @param list   list of GrammarSymbol
-   * @param symbol GrammarSymbol to be looked up for existance
-   * @return true if exists; false otherwise
+   * @param list grammar symbols organized into a list
+   * @return the First set of the grammar list
    */
-  private boolean listContains(List<GrammarSymbol> list, GrammarSymbol symbol) {
+  private Set<GrammarSymbol> firstSetofSymbolList(List<GrammarSymbol> list) {
+    Set<GrammarSymbol> firstSet = new HashSet<>();
+    int emptyCount = 0;
+    // process all grammar symbols in the input list
     for (int i = 0; i < list.size(); i++) {
-      if (list.get(i).equals(symbol)) {
-        return true;
+      GrammarSymbol symbol = list.get(i);
+      if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
+        firstSet.add(new GrammarSymbol(symbol));
+        break;
+      } else if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
+        Set<GrammarSymbol> symbolFirstSet = this.firstSets
+            .getTerminalSet(symbol);
+        firstSet.addAll(symbolFirstSet);
+        if (symbolFirstSet.contains(new GrammarSymbol("empty")) == false) {
+          break;
+        } else {
+          emptyCount++;
+        }
       }
     }
-    return false;
+    if (emptyCount < list.size()) {
+      firstSet.remove(new GrammarSymbol("empty"));
+    }
+    return firstSet;
   }
 
 }

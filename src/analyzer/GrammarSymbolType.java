@@ -12,18 +12,18 @@ public enum GrammarSymbolType {
   OR("or"),
   ;
 
-  private String type = "";
+  private String name = "";
 
   GrammarSymbolType(String type) {
-    this.type = type;
+    this.name = type;
   }
 
-  public String getType() {
-    return this.type;
+  public String getName() {
+    return this.name;
   }
 
   public boolean equals(GrammarSymbolType symbolType) {
-    if (this.type.equals(symbolType.getType())) {
+    if (this.name.equals(symbolType.getName())) {
       return true;
     } else {
       return false;
@@ -32,6 +32,6 @@ public enum GrammarSymbolType {
 
   @Override
   public String toString() {
-    return this.type;
+    return this.name;
   }
 }
