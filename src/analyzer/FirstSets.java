@@ -1,6 +1,7 @@
 package analyzer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -105,6 +106,12 @@ public class FirstSets {
       }
     }
     return modified;
+  }
+
+  public boolean addFirstSet(GrammarSymbol nonterminal,
+      GrammarSymbol terminal) {
+    return this.addFirstSet(nonterminal,
+        new ArrayList<>(Arrays.asList(terminal)));
   }
 
   /**

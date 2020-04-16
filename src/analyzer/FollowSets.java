@@ -1,6 +1,7 @@
 package analyzer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FollowSets {
@@ -99,6 +100,12 @@ public class FollowSets {
       }
     }
     return modified;
+  }
+
+  public boolean addFollowSet(GrammarSymbol nonterminal,
+      GrammarSymbol terminal) {
+    return this.addFollowSet(nonterminal,
+        new ArrayList<>(Arrays.asList(terminal)));
   }
 
   /**
