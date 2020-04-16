@@ -53,11 +53,14 @@ public class PredictiveParsingTableConstructor {
   }
 
   private void buildFirstSets() {
+    // finished - whether the FIRST set of a nonterminal is calculated
     Map<String, Boolean> finished = new HashMap<>();
+    // initialize the finished map
     for (int i = 0; i < this.productions.size(); i++) {
       GrammarSymbol LHS = this.productions.getProduction(i).getLHS();
       finished.put(LHS.toString(), false);
     }
+    // select a production to process with recursive procedure
     for (int i = 0; i < this.productions.size(); i++) {
       Production production = this.productions.getProduction(i);
       if (finished.get(production.getLHS().toString()) == true) {
@@ -75,6 +78,7 @@ public class PredictiveParsingTableConstructor {
     /*
      * TODO
      */
+
   }
 
   private void buildFollowSets() {
