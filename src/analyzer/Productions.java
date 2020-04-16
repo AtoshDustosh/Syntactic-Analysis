@@ -40,6 +40,16 @@ public class Productions {
     return new Production(this.productionList.get(index));
   }
 
+  public Production getProduction(GrammarSymbol nonterminal) {
+    for (int i = 0; i < this.productionList.size(); i++) {
+      GrammarSymbol LHS = this.productionList.get(i).getLHS();
+      if (LHS.equals(nonterminal)) {
+        return new Production(this.productionList.get(i));
+      }
+    }
+    return new Production();
+  }
+
   public int size() {
     return this.productionList.size();
   }

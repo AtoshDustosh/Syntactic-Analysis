@@ -18,6 +18,10 @@ public class Production {
   private GrammarSymbol leftHandSide = new GrammarSymbol();
   private List<List<GrammarSymbol>> rightHandSide = new ArrayList<>();
 
+  public Production() {
+
+  }
+
   public Production(List<GrammarSymbol> symbolList) {
     this.parseGrammarSymbolList(symbolList);
   }
