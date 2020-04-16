@@ -191,6 +191,14 @@ public class FirstSets {
     return false;
   }
 
+  public FirstSets copy() {
+    FirstSets copy = new FirstSets();
+    for (int i = 0; i < this.nonterminalList.size(); i++) {
+      copy.addFirstSet(this.nonterminalList.get(i), this.terminalsList.get(i));
+    }
+    return copy;
+  }
+
   @Override
   public String toString() {
     String str = "";

@@ -19,6 +19,7 @@ public class KeyWord {
       this.add("boolean");
       this.add("record");
       this.add("if");
+      this.add("then");
       this.add("else");
       this.add("do");
       this.add("while");

@@ -16,21 +16,21 @@ public class Production {
   public static final String DERIVATION_SYMBOL = "->";
 
   private GrammarSymbol leftHandSide = new GrammarSymbol();
-  private List<GrammarSymbol> rightHandSide = new ArrayList<>();
+  private List<List<GrammarSymbol>> rightHandSide = new ArrayList<>();
 
   public Production(List<GrammarSymbol> symbolList) {
     this.parseGrammarSymbolList(symbolList);
   }
 
   public Production(GrammarSymbol leftHandSide,
-      List<GrammarSymbol> rightHandSide) {
+      List<List<GrammarSymbol>> rightHandSide) {
     this.leftHandSide = leftHandSide;
     this.rightHandSide = rightHandSide;
   }
 
   public Production(Production production) {
     this.leftHandSide = production.getLHS();
-    this.rightHandSide = production.getRHS();
+    this.rightHandSide = production.getRHSlist();
   }
 
   public static void main(String[] args) {
@@ -43,8 +43,7 @@ public class Production {
     symbolList.add(new GrammarSymbol(";"));
 
     Production production = new Production(symbolList);
-    System.out.println("production: \n" + production.getProductionString());
-    System.out.println("production details: \n" + production.toString());
+    System.out.println("production: \n" + production.toString());
 
   }
 
@@ -52,36 +51,47 @@ public class Production {
     return this.leftHandSide;
   }
 
-  public List<GrammarSymbol> getRHS() {
-    return new ArrayList<>(this.rightHandSide);
-  }
-
-  public String getProductionString() {
-    String str = "";
-    str = str + this.leftHandSide.getString() + " -> ";
+  public List<List<GrammarSymbol>> getRHSlist() {
+    List<List<GrammarSymbol>> rhs = new ArrayList<>();
     for (int i = 0; i < this.rightHandSide.size(); i++) {
-      str = str + this.rightHandSide.get(i).getString() + " ";
+      rhs.add(new ArrayList<>(this.rightHandSide.get(i)));
     }
-    return str;
+    return rhs;
   }
 
   @Override
   public String toString() {
     String str = "";
-    str = str + this.leftHandSide.toString();
+    str = str + this.leftHandSide.getString() + " ->";
     for (int i = 0; i < this.rightHandSide.size(); i++) {
-      str = str + "\n" + this.rightHandSide.get(i).toString();
+      String rhsPiece = "";
+      List<GrammarSymbol> productionPiece = this.rightHandSide.get(i);
+      for (int j = 0; j < productionPiece.size(); j++) {
+        rhsPiece = rhsPiece + productionPiece.get(j).toString() + " ";
+      }
+      rhsPiece = "\t" + rhsPiece;
+      if (i > 0) {
+        rhsPiece = " or" + rhsPiece;
+      }
+      str = str + rhsPiece + "\n";
     }
     return str;
   }
 
   public boolean equals(Production production) {
     GrammarSymbol LHS = production.getLHS();
-    List<GrammarSymbol> RHS = production.getRHS();
+    List<List<GrammarSymbol>> RHS = production.getRHSlist();
     boolean result = LHS.equals(this.leftHandSide);
     result = result && (RHS.size() == this.rightHandSide.size());
+    if (result == false) {
+      return false;
+    }
     for (int i = 0; i < RHS.size(); i++) {
-      result = result && (RHS.get(i).equals(this.rightHandSide.get(i)));
+      for (int j = 0; j < RHS.get(i).size(); j++) {
+        GrammarSymbol thisSymbol = this.rightHandSide.get(i).get(j);
+        GrammarSymbol thatSymbol = RHS.get(i).get(j);
+        result = result && (thisSymbol.equals(thatSymbol));
+      }
     }
     return result;
   }
@@ -91,14 +101,25 @@ public class Production {
       System.exit(PRODUCTION_INVALID);
     }
     this.leftHandSide = symbolList.get(0);
+    List<GrammarSymbol> rhsPiece = new ArrayList<>();
     for (int i = 2; i < symbolList.size(); i++) {
-      this.rightHandSide.add(symbolList.get(i));
+      GrammarSymbol symbol = symbolList.get(i);
+      if (symbol.getType().equals(GrammarSymbolType.OR) == false) {
+        rhsPiece.add(symbol);
+      } else {
+        this.rightHandSide.add(rhsPiece);
+        rhsPiece = new ArrayList<>();
+      }
+    }
+    if (rhsPiece.size() > 0) {
+      this.rightHandSide.add(rhsPiece);
     }
   }
 
   private boolean checkGrammarSymbolList(List<GrammarSymbol> symbolList) {
     if (symbolList.size() < 3) {
-      System.out.println("error: production invalid - too short");
+      System.out.println(
+          "error: production invalid - too short - " + symbolList.toString());
       return false;
     }
     if (symbolList.get(0).isTerminalSymbol()

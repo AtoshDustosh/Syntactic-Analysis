@@ -47,7 +47,7 @@ public class Productions {
   public void loadProductionsFile(String filePath) {
     this.productionsFilePath = filePath;
     this.loadProductionsFile();
-    this.breakProductionsIntoPieces();
+//    this.breakProductionsIntoPieces();
   }
 
   @Override
@@ -95,34 +95,5 @@ public class Productions {
       symbolList.add(new GrammarSymbol(strArray[i]));
     }
     return symbolList;
-  }
-
-  /**
-   * Break productions into single productions, which means breaking
-   * those productions with "or" into several productions that start
-   * with the same left hand side nonterminal.
-   */
-  private void breakProductionsIntoPieces() {
-    List<Production> newProductionList = new ArrayList<>();
-    for (Production p : this.productionList) {
-      GrammarSymbol LHS = p.getLHS();
-      List<GrammarSymbol> RHS = p.getRHS();
-      List<List<GrammarSymbol>> newRHSList = new ArrayList<>();
-      List<GrammarSymbol> newRHS = new ArrayList<>();
-      for (GrammarSymbol symbol : RHS) {
-        if (symbol.getType().equals(GrammarSymbolType.OR)) {
-          newRHSList.add(newRHS);
-          newRHS = new ArrayList<>();
-        } else {
-          newRHS.add(symbol);
-        }
-      }
-      newRHSList.add(newRHS); // add the last piece of RHS
-      for (int i = 0; i < newRHSList.size(); i++) {
-        Production newProduction = new Production(LHS, newRHSList.get(i));
-        newProductionList.add(newProduction);
-      }
-    }
-    this.productionList = newProductionList;
   }
 }
