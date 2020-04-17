@@ -21,7 +21,8 @@ public class PredictiveParsingTableConstructor {
   private boolean selectSetBuilt = false;
   private SelectSets selectSets = new SelectSets();
 
-  private int debug = 0;
+  private PredictiveParsingTable ppTable = null;
+  private boolean ppTableBuilt = false;
 
   public PredictiveParsingTableConstructor() {
 
@@ -32,9 +33,6 @@ public class PredictiveParsingTableConstructor {
   }
 
   public static void main(String[] args) {
-    /*
-     * TODO compliment
-     */
     Productions productions = new Productions();
     PredictiveParsingTableConstructor pptConstructor = new PredictiveParsingTableConstructor();
 
@@ -56,8 +54,13 @@ public class PredictiveParsingTableConstructor {
     this.buildFirstSets();
     this.buildFollowSets();
     this.buildSelectSets();
+    if (this.isLL1Grammar()) {
+      this.buildPredictiveParsingTable();
+    } else {
+      System.out.println("error: not LL(1) grammar\n");
+    }
     /*
-     * TODO add construction of FollowSets and SelectSets
+     * TODO add construction of predictive parsing table
      */
   }
 
@@ -71,6 +74,10 @@ public class PredictiveParsingTableConstructor {
 
   public SelectSets getSelectSets() {
     return this.selectSets.copy();
+  }
+
+  public PredictiveParsingTable getPPTable() {
+    return this.ppTable.copy();
   }
 
   private void buildFirstSets() {
@@ -247,6 +254,18 @@ public class PredictiveParsingTableConstructor {
     this.selectSetBuilt = true;
   }
 
+  private void buildPredictiveParsingTable() {
+    if (this.selectSetBuilt == false) {
+      this.buildSelectSets();
+    }
+    this.ppTable = new PredictiveParsingTable(this.productions);
+    /*
+     * TODO build the table entries
+     */
+    System.out.println("ppTable not built\n");
+    this.ppTableBuilt = true;
+  }
+
   /**
    * Calculate the First set of a list of grammar symbols.
    * 
@@ -279,4 +298,60 @@ public class PredictiveParsingTableConstructor {
     return firstSet;
   }
 
+  private boolean isLL1Grammar() {
+    // check every production
+    for (int i = 0; i < this.productions.size(); i++) {
+      Production p = this.productions.getProduction(i);
+      GrammarSymbol LHS = p.getLHS();
+      Set<GrammarSymbol> lhsFollowSet = this.followSets.getTerminalSet(LHS);
+      List<List<GrammarSymbol>> rhsList = p.getRHSlist();
+      boolean canInferEmpty = false;
+      // check the RHS list of a LHS
+      for (int j = 0; j < rhsList.size(); j++) {
+        List<GrammarSymbol> RHS = rhsList.get(j);
+        Set<GrammarSymbol> rhsFirstSet = this.firstSetofSymbolList(RHS);
+        // check every RHS in the list whether they can infer grammar string "empty"
+        if (rhsFirstSet.contains(new GrammarSymbol("empty"))) {
+          Set<GrammarSymbol> otherRHSfirstSets = new HashSet<>();
+          for (int k = 0; k < rhsList.size(); k++) {
+            if (k != j) {
+              List<GrammarSymbol> otherRHS = rhsList.get(k);
+              Set<GrammarSymbol> otherRHSfirstSet = this
+                  .firstSetofSymbolList(otherRHS);
+              otherRHSfirstSets.addAll(otherRHSfirstSet);
+            }
+          }
+          otherRHSfirstSets.retainAll(lhsFollowSet);
+          if (otherRHSfirstSets.size() > 0) {
+            System.out.println("production: \n" + p.toString());
+            System.out.println("RHS first set: \n" + rhsFirstSet.toString());
+            System.out.println(
+                "other RHS first set: \n" + otherRHSfirstSets.toString());
+            System.out.println("LHS follow set: \n" + lhsFollowSet.toString());
+
+            return false;
+          }
+          canInferEmpty = true;
+        } // end of checking "empty"
+      } // end of checking RHS list
+      if (canInferEmpty == false) {
+        Set<GrammarSymbol> intersection = new HashSet<>();
+        if (rhsList.size() > 0) {
+          intersection.addAll(rhsList.get(0));
+        }
+        for (int j = 0; j < rhsList.size(); j++) {
+          List<GrammarSymbol> RHS = rhsList.get(j);
+          Set<GrammarSymbol> rhsFirstSet = this.firstSetofSymbolList(RHS);
+          intersection.retainAll(rhsFirstSet);
+        }
+        if (intersection.isEmpty() == false) {
+          System.out.println("production: \n" + p.toString());
+          System.out.println("LHS follow set: \n" + lhsFollowSet.toString());
+          System.out.println("remained gS: \n" + intersection.toString());
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }

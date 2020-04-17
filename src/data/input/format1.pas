@@ -1,12 +1,9 @@
-nonTerminal:PROGRAM,DEFINE,DATATYPE,SINGLE_TYPE,ARRAY_SUFFIX,ASSIGNMENT,EXPRESSION,ARRAY_ELEMENT,ARITHMETIC_OP_DUAL,ARITHMETIC_OP_SING_SUFFIX,CONTROL,CONDITION,LOGIC_OP_DUAL,LOGIC_OP_SING_PREFIX,RELOP,PROCEDURE_CALL,ELIST
-Terminal:id number int double boolean record if else do while proc call + - * / % & | ~ ^ ! > < >= <= == != ++ -- = ; ( ) [ ] { } , . return && || then
---------------------
 IDN 1 id
 DEC 2 number
 OCT 3 number
 HEX 4 number
 DOUBLE 5 number
-COM 8 ANNOTATION
+COM 8 annotation
 int 9 int
 double 10 double
 boolean 11 boolean
@@ -23,7 +20,7 @@ call 18 call
 / 22 /
 % 23 %
 & 24 &
-| 25 |
+| 25 \|
 ~ 26 ~
 ^ 27 ^
 ! 28 !

@@ -3,8 +3,10 @@ package analyzer;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import data.input.InputFilePaths;
 
@@ -18,6 +20,9 @@ public class Productions {
   private String productionsFilePath = InputFilePaths.PRODUCTIONS.getFilePath();
 
   private List<Production> productionList = new ArrayList<>();
+
+  private Set<GrammarSymbol> nonterminalSet = new HashSet<>();
+  private Set<GrammarSymbol> terminalSet = new HashSet<>();
 
   public Productions() {
 
@@ -83,6 +88,14 @@ public class Productions {
     return new Productions(brokenProductions);
   }
 
+  public Set<GrammarSymbol> getNonterminalSet() {
+    return new HashSet<>(this.nonterminalSet);
+  }
+
+  public Set<GrammarSymbol> getTerminalSet() {
+    return new HashSet<>(this.terminalSet);
+  }
+
   @Override
   public String toString() {
     String str = "";
@@ -125,7 +138,13 @@ public class Productions {
       } else if (strArray[i].length() == 0) {
         continue;
       }
+      GrammarSymbol symbol = new GrammarSymbol(strArray[i]);
       symbolList.add(new GrammarSymbol(strArray[i]));
+      if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
+        this.nonterminalSet.add(symbol);
+      } else if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
+        this.terminalSet.add(symbol);
+      }
     }
     return symbolList;
   }
