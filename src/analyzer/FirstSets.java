@@ -105,7 +105,7 @@ public class FirstSets {
     return modified;
   }
 
-  public Set<GrammarSymbol> getTerminalSet(GrammarSymbol symbol) {
+  public Set<GrammarSymbol> getFirstSet(GrammarSymbol symbol) {
     Set<GrammarSymbol> oldSet = this.firstSetMap.get(symbol);
     if (oldSet == null) {
       return new HashSet<>();
@@ -114,7 +114,7 @@ public class FirstSets {
     }
   }
 
-  public boolean ifHasTerminal(GrammarSymbol nonterminal,
+  public boolean ifFirstSetHasTerminal(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
     Set<GrammarSymbol> oldSet = this.firstSetMap.get(nonterminal);
     if (oldSet == null) {
@@ -127,7 +127,7 @@ public class FirstSets {
     }
   }
 
-  public boolean ifHasNonterminal(GrammarSymbol nonterminal) {
+  public boolean ifFirstSetHasNonterminal(GrammarSymbol nonterminal) {
     return this.firstSetMap.containsKey(nonterminal);
   }
 

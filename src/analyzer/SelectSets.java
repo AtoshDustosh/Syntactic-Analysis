@@ -21,7 +21,7 @@ public class SelectSets {
     this.selectSetMap.put(production, new HashSet<>(terminalList));
   }
 
-  public Set<GrammarSymbol> getTerminalSet(Production production) {
+  public Set<GrammarSymbol> getSelectSet(Production production) {
     if (this.selectSetMap.containsKey(production)) {
       return new HashSet<>(this.selectSetMap.get(production));
     } else {

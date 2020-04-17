@@ -101,7 +101,7 @@ public class FollowSets {
     return modified;
   }
 
-  public Set<GrammarSymbol> getTerminalSet(GrammarSymbol symbol) {
+  public Set<GrammarSymbol> getFollowSet(GrammarSymbol symbol) {
     Set<GrammarSymbol> oldSet = this.followSetMap.get(symbol);
     if (oldSet == null) {
       return new HashSet<>();
@@ -110,7 +110,7 @@ public class FollowSets {
     }
   }
 
-  public boolean ifHasTerminal(GrammarSymbol nonterminal,
+  public boolean ifFollowSetHasTerminal(GrammarSymbol nonterminal,
       GrammarSymbol terminal) {
     Set<GrammarSymbol> oldSet = this.followSetMap.get(nonterminal);
     if (oldSet == null) {
@@ -123,7 +123,7 @@ public class FollowSets {
     }
   }
 
-  public boolean ifHasNonterminal(GrammarSymbol nonterminal) {
+  public boolean ifFollowSetHasNonterminal(GrammarSymbol nonterminal) {
     return this.followSetMap.containsKey(nonterminal);
   }
 

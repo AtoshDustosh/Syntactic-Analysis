@@ -130,7 +130,7 @@ public class PredictiveParsingTableConstructor {
           boolean ifFirstSetFinished = finished.get(symbol.toString());
           if (ifFirstSetFinished) {
             Set<GrammarSymbol> newFirstSet = this.firstSets
-                .getTerminalSet(symbol);
+                .getFirstSet(symbol);
             if (emptyCount == j) {
               this.firstSets.addFirstSet(LHS, new HashSet<>(newFirstSet));
             }
@@ -199,7 +199,7 @@ public class PredictiveParsingTableConstructor {
             continue;
           } else if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
             Set<GrammarSymbol> lhsFollowSet = this.followSets
-                .getTerminalSet(LHS);
+                .getFollowSet(LHS);
             if (k == RHS.size() - 1) {
               modified = modified
                   || this.followSets.addFollowSet(symbol, lhsFollowSet);
@@ -238,7 +238,7 @@ public class PredictiveParsingTableConstructor {
       List<GrammarSymbol> RHS = piece.getRHSlist().get(0);
       Set<GrammarSymbol> rhsFirstSet = this.firstSetofSymbolList(RHS);
       if (rhsFirstSet.contains(new GrammarSymbol("empty"))) {
-        Set<GrammarSymbol> lhsFollowSet = this.followSets.getTerminalSet(LHS);
+        Set<GrammarSymbol> lhsFollowSet = this.followSets.getFollowSet(LHS);
         rhsFirstSet.remove(new GrammarSymbol("empty"));
         this.selectSets.addSelectSet(piece, rhsFirstSet);
         this.selectSets.addSelectSet(piece, lhsFollowSet);
@@ -257,7 +257,7 @@ public class PredictiveParsingTableConstructor {
     Productions pieces = this.productions.breakIntoPieces();
     for (int i = 0; i < pieces.size(); i++) {
       Production piece = pieces.getProduction(i);
-      Set<GrammarSymbol> pieceSelectSet = this.selectSets.getTerminalSet(piece);
+      Set<GrammarSymbol> pieceSelectSet = this.selectSets.getSelectSet(piece);
       GrammarSymbol LHS = piece.getLHS();
       for (GrammarSymbol symbol : pieceSelectSet) {
         this.ppTable.setProductionTableEntry(LHS, symbol, piece);
@@ -286,7 +286,7 @@ public class PredictiveParsingTableConstructor {
         break;
       } else if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
         Set<GrammarSymbol> symbolFirstSet = this.firstSets
-            .getTerminalSet(symbol);
+            .getFirstSet(symbol);
         firstSet.addAll(symbolFirstSet);
         if (symbolFirstSet.contains(new GrammarSymbol("empty")) == false) {
           break;
@@ -306,9 +306,10 @@ public class PredictiveParsingTableConstructor {
     for (int i = 0; i < this.productions.size(); i++) {
       Production p = this.productions.getProduction(i);
       GrammarSymbol LHS = p.getLHS();
-      Set<GrammarSymbol> lhsFollowSet = this.followSets.getTerminalSet(LHS);
+      Set<GrammarSymbol> lhsFollowSet = this.followSets.getFollowSet(LHS);
       List<List<GrammarSymbol>> rhsList = p.getRHSlist();
       boolean canInferEmpty = false;
+      System.out.println("production: \n" + p.toString());
       // check the RHS list of a LHS
       for (int j = 0; j < rhsList.size(); j++) {
         List<GrammarSymbol> RHS = rhsList.get(j);
@@ -326,7 +327,6 @@ public class PredictiveParsingTableConstructor {
           }
           otherRHSfirstSets.retainAll(lhsFollowSet);
           if (otherRHSfirstSets.size() > 0) {
-            System.out.println("production: \n" + p.toString());
             System.out.println("RHS first set: \n" + rhsFirstSet.toString());
             System.out.println(
                 "other RHS first set: \n" + otherRHSfirstSets.toString());
@@ -339,22 +339,22 @@ public class PredictiveParsingTableConstructor {
       } // end of checking RHS list
       if (canInferEmpty == false) {
         Set<GrammarSymbol> intersection = new HashSet<>();
-        if (rhsList.size() > 0) {
+        if (rhsList.size() > 1) {
           intersection.addAll(rhsList.get(0));
         }
         for (int j = 0; j < rhsList.size(); j++) {
           List<GrammarSymbol> RHS = rhsList.get(j);
           Set<GrammarSymbol> rhsFirstSet = this.firstSetofSymbolList(RHS);
+          System.out.println("RHS: " + RHS + " - first set: " + rhsFirstSet);
           intersection.retainAll(rhsFirstSet);
         }
         if (intersection.isEmpty() == false) {
-          System.out.println("production: \n" + p.toString());
           System.out.println("LHS follow set: \n" + lhsFollowSet.toString());
           System.out.println("remained gS: \n" + intersection.toString());
           return false;
         }
       }
-    }
+    } // end of checking this production
     return true;
   }
 }
