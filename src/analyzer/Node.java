@@ -1,54 +1,49 @@
-package grammaAnalysis.tree;
+package analyzer;
 
 import java.util.ArrayList;
-import grammaAnalysis.symbol.GrammaSymbol;
 
 /**
  * Node of the tree
  * 
  * @author lenovo
- *
  */
 public class Node {
   private Node parent;//
-  private GrammaSymbol grammaSymbol;
+  private GrammarSymbol grammaSymbol;
   private ArrayList<Node> childrenList;// Child node set
 
-
   /**
-   * The node is generated according to the list of input children, grammar symbols, and parent
-   * nodes
+   * The node is generated according to the list of input children,
+   * grammar symbols, and parent nodes
    * 
-   * @param p parent
+   * @param p  parent
    * @param gs grammar symbols
    * @param cl the list of input children
    */
-  public Node(Node p, GrammaSymbol gs, ArrayList<Node> cl) {
-    setParent(p);
-    setGrammaSymbol(gs);
-    setChildrenList(cl);
+  public Node(Node p, GrammarSymbol gs, ArrayList<Node> cl) {
+    this.setParent(p);
+    this.setGrammaSymbol(gs);
+    this.setChildrenList(cl);
   }
 
   /**
    * Construct a node without children
    * 
-   * @param p parent
+   * @param p  parent
    * @param gs grammar symbols
-   * 
    */
 
-  public Node(Node p, GrammaSymbol gs) {
-    setParent(p);
-    setGrammaSymbol(gs);
-    setChildrenList(null);
+  public Node(Node p, GrammarSymbol gs) {
+    this.setParent(p);
+    this.setGrammaSymbol(gs);
+    this.setChildrenList(null);
   }
-
 
   /**
    * @return parent
    */
   public Node getParent() {
-    return parent;
+    return this.parent;
   }
 
   /**
@@ -61,14 +56,14 @@ public class Node {
   /**
    * @return grammaSymbol
    */
-  public GrammaSymbol getGrammaSymbol() {
-    return grammaSymbol;
+  public GrammarSymbol getGrammaSymbol() {
+    return this.grammaSymbol;
   }
 
   /**
    * @param grammaSymbol ÒªÉèÖÃµÄ grammaSymbol
    */
-  public void setGrammaSymbol(GrammaSymbol grammaSymbol) {
+  public void setGrammaSymbol(GrammarSymbol grammaSymbol) {
     this.grammaSymbol = grammaSymbol;
   }
 
@@ -76,7 +71,7 @@ public class Node {
    * @return childrenList
    */
   public ArrayList<Node> getChildrenList() {
-    return childrenList;
+    return this.childrenList;
   }
 
   /**
@@ -85,7 +80,5 @@ public class Node {
   public void setChildrenList(ArrayList<Node> childrenList) {
     this.childrenList = childrenList;
   }
-
-
 
 }
