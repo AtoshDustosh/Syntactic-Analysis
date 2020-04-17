@@ -255,12 +255,22 @@ public class PredictiveParsingTableConstructor {
     }
     this.ppTable = new PredictiveParsingTable(this.productions);
     Productions pieces = this.productions.breakIntoPieces();
+    // add production entries
     for (int i = 0; i < pieces.size(); i++) {
       Production piece = pieces.getProduction(i);
       Set<GrammarSymbol> pieceSelectSet = this.selectSets.getSelectSet(piece);
       GrammarSymbol LHS = piece.getLHS();
       for (GrammarSymbol symbol : pieceSelectSet) {
         this.ppTable.setProductionTableEntry(LHS, symbol, piece);
+      }
+    }
+    // add synch entries
+    Set<GrammarSymbol> nonterminalSet = this.productions.getNonterminalSet();
+    for (GrammarSymbol nonterminal : nonterminalSet) {
+      Set<GrammarSymbol> followSet = this.followSets.getFollowSet(nonterminal);
+      for (GrammarSymbol terminal : followSet) {
+        this.ppTable.setSynchTableEntry(nonterminal, terminal, true);
+
       }
     }
     this.ppTableBuilt = true;
