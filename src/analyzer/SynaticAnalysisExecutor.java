@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -70,8 +71,9 @@ public class SynaticAnalysisExecutor {
     tokenToTerminal.put(46, new GrammarSymbol("."));
     tokenToTerminal.put(47, new GrammarSymbol("return"));
     tokenToTerminal.put(48, new GrammarSymbol("&&"));
-    tokenToTerminal.put(49, new GrammarSymbol("||"));
+    tokenToTerminal.put(49, new GrammarSymbol("\\|\\|"));
     tokenToTerminal.put(50, new GrammarSymbol("then"));
+    tokenToTerminal.put(51, new GrammarSymbol("$"));
 
   }
 
@@ -84,7 +86,7 @@ public class SynaticAnalysisExecutor {
    * @param filepath
    * @return tokens
    */
-  public List<String> getTokensFromFile(String filepath) {
+  public ArrayList<String> getTokensFromFile(String filepath) {
     ArrayList<String> tokens = new ArrayList<>();
     try {
       BufferedReader br = new BufferedReader(new FileReader(new File(filepath)));
@@ -100,6 +102,15 @@ public class SynaticAnalysisExecutor {
   }
 
   /**
+   * test用
+   * 
+   * @param m
+   */
+  public void Out(String m) {
+    System.out.println(m);
+  }
+
+  /**
    * 根据预测分析表和token序列返回语法树
    * 
    * @param ppt
@@ -109,39 +120,88 @@ public class SynaticAnalysisExecutor {
   public MutiWayTree getGrammaTree(PredictiveParsingTable ppt, String tokenpath) {
 
 
-    Node rootnode = new Node(null, new GrammarSymbol("PROGRAM")); // 根节点
+    Node rootnode = new Node(null, ppt.getProductions().getProduction(0).getLHS()); // 根节点
     MutiWayTree mwt = new MutiWayTree(rootnode); // 根据根节点创建树
     Stack<Node> stateStack = new Stack<>();
     stateStack.push(rootnode);
     ArrayList<String> tokens = new ArrayList<>(); // tokens列表
-    tokens = new ArrayList<>(getTokensFromFile(tokenpath));
+    tokens = getTokensFromFile(tokenpath);
 
 
+    int count = 0;
 
-    for (String token : tokens) {
-      GrammarSymbol tokenGS = tokenToTerminal.get(Integer.parseInt(token.split("<|>|,")[0]));// 当前Token的语法符号
+    for (int k = 0; k < tokens.size(); k++) {
+      count++;
+      String tokenNumString = tokens.get(k).replace("<", "");
+      tokenNumString = tokenNumString.replace(">", "");
+      tokenNumString = tokenNumString.split(",")[0];
+      int tokennum = Integer.parseInt(tokenNumString);
+      GrammarSymbol tokenGS = tokenToTerminal.get(tokennum);// 当前Token的语法符号
       Node topNode = stateStack.pop();
       GrammarSymbol top = topNode.getGrammaSymbol();
 
+
+
       if (top.isTerminalSymbol() && top.equals(tokenGS)) {// 如果top是终结符且和当前输入token语法符号先沟通，则将其加入CurrentNode的子节点集合，并让栈顶指针指向下一个语法符号
 
-        Node kidnode = new Node(mwt.getCurrentNode(), top);
-        mwt.setCurrentNode(stateStack.firstElement());
+        // Node kidnode = new Node(mwt.getCurrentNode(), top);
+
+        // 终结符错误判断开始
+        if (!top.equals(tokenGS)) {
+          k--;
+          continue;
+        }
+        // 终结符错误判断结束
+
+
+        mwt.setCurrentNode(stateStack.get(stateStack.size() - 1));
 
       } else if (top.isNonterminalSymbol()) {
         /*
          * 如果top是非终结符，将其首先把X逐出STACK栈顶,然后把产生式的右部符号串按反序一一推进STACK栈(若右部符号为ε,则意味着不推什么东西进栈).
          * 在把产生式的右部符号推进栈的同时把这个产生式右部所有语法符号作为一个节点加入到树结构中
          */
+
+
+
         Production pbreak = ppt.getProductionTableEntry(top, tokenGS);
-        ArrayList<GrammarSymbol> rightGrammars = new ArrayList<>(pbreak.getRHSlist().get(0));// 是这样么？
+        // 非终结符错误判断开始
+        if (pbreak.equals(new Production())) {
+          if (ppt.getSynchTableEntry(top, tokenGS)) {
+            k--;
+            continue;
+          } else {
+            stateStack.push(topNode);
+            continue;
+          }
+        }
 
 
+        // 非终结符错误判断结束
+
+        System.out.println("count =" + count);
+        List<GrammarSymbol> rightGrammars = new ArrayList<>();
+        if (pbreak.getRHSlist().size() == 0) {
+          rightGrammars = new ArrayList<>(Arrays.asList(new GrammarSymbol("empty")));
+        } else {
+          rightGrammars = pbreak.getRHSlist().get(0);// 是这样么？
+        }
+
+
+
+        k--;
         for (int i = rightGrammars.size() - 1; i >= 0; i--) {
           Node node = new Node(mwt.getCurrentNode(), rightGrammars.get(i));
+          if (!rightGrammars.get(i).getName().equals("empty"))
+            stateStack.push(node);
         }
-        mwt.setCurrentNode(stateStack.firstElement());
+
+        if (!stateStack.empty())
+          mwt.setCurrentNode(stateStack.get(stateStack.size() - 1));
+        else
+          break;
       }
+
     }
     mwt.backToTheRoot();
     return mwt;
@@ -149,15 +209,25 @@ public class SynaticAnalysisExecutor {
 
 
 
+  public MutiWayTree SynaticAnalysis(String productionPath, String tokenPath) {
+    Productions pros = new Productions(productionPath);
+    PredictiveParsingTableConstructor prtc = new PredictiveParsingTableConstructor(pros);
+    System.out.println(prtc.getPPTable().toString());
+    SynaticAnalysisExecutor sAE = new SynaticAnalysisExecutor();
+    MutiWayTree mwt = sAE.getGrammaTree(prtc.getPPTable(), tokenPath);
+    return mwt;
+  }
+
   /**
    * test
    * 
    * @param args
    */
   public static void main(String[] args) {
-    Productions pros = new Productions();
-    pros.loadProductionsFile("src/data/input/productions1.format");
-    PredictiveParsingTable prt = new PredictiveParsingTable(pros);
+    // "src/data/input/productions1.format"
+    // "src/data/input/tokens.token"
+    System.out.println(new SynaticAnalysisExecutor()
+        .SynaticAnalysis("src/data/input/productions1.format", "src/data/input/tokens.token"));
 
 
 
