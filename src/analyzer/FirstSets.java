@@ -88,13 +88,6 @@ public class FirstSets {
     return modified;
   }
 
-  public boolean addFirstSet(GrammarSymbol nonterminal,
-      GrammarSymbol terminal) {
-    Set<GrammarSymbol> tempSet = new HashSet<>();
-    tempSet.add(terminal);
-    return this.addFirstSet(nonterminal, tempSet);
-  }
-
   /**
    * Remove a terminal from the First set to the nonterminal in this
    * database.

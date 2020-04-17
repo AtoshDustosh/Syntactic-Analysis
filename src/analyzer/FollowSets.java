@@ -1,10 +1,7 @@
 package analyzer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,32 +15,32 @@ public class FollowSets {
 
   public static void main(String[] args) {
     FollowSets test = new FollowSets();
-    List<GrammarSymbol> list = new ArrayList<>();
+    Set<GrammarSymbol> set = new HashSet<>();
     GrammarSymbol s1 = new GrammarSymbol("A");
     GrammarSymbol s2 = new GrammarSymbol("A");
     GrammarSymbol s3 = new GrammarSymbol("A");
 
-    list.clear();
-    list.add(new GrammarSymbol("a"));
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("b"));
-    System.out.println("modified: " + test.addFollowSet(s1, list));
+    set.clear();
+    set.add(new GrammarSymbol("a"));
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("b"));
+    System.out.println("modified: " + test.addFollowSet(s1, set));
 
     System.out.println(test.toString());
 
-    list.clear();
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("c"));
-    System.out.println("modified: " + test.addFollowSet(s2, list));
+    set.clear();
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("c"));
+    System.out.println("modified: " + test.addFollowSet(s2, set));
 
     System.out.println(test.toString());
 
-    list.clear();
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("b"));
-    list.add(new GrammarSymbol("c"));
-    list.add(new GrammarSymbol("c"));
-    System.out.println("modified: " + test.addFollowSet(s3, list));
+    set.clear();
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("b"));
+    set.add(new GrammarSymbol("c"));
+    set.add(new GrammarSymbol("c"));
+    System.out.println("modified: " + test.addFollowSet(s3, set));
 
     System.out.println(test.toString());
 
@@ -70,29 +67,21 @@ public class FollowSets {
    * @return true if modified; false otherwise
    */
   public boolean addFollowSet(GrammarSymbol nonterminal,
-      List<GrammarSymbol> terminalList) {
+      Set<GrammarSymbol> terminalSet) {
     boolean modified = false;
-    Set<GrammarSymbol> terminalSet = new HashSet<>();
-    for (int i = 0; i < terminalList.size(); i++) {
-      terminalSet.add(terminalList.get(i));
-    }
+    Set<GrammarSymbol> tempSet = new HashSet<>(terminalSet);
+    tempSet.remove(new GrammarSymbol("empty"));
     if (this.followSetMap.containsKey(nonterminal)) {
       Set<GrammarSymbol> oldSet = this.followSetMap.get(nonterminal);
-      if (oldSet.containsAll(terminalSet) == false) {
-        oldSet.addAll(terminalSet);
+      if (oldSet.containsAll(tempSet) == false) {
+        oldSet.addAll(tempSet);
         modified = true;
       }
     } else {
-      this.followSetMap.put(nonterminal, terminalSet);
+      this.followSetMap.put(nonterminal, tempSet);
       modified = true;
     }
     return modified;
-  }
-
-  public boolean addFollowSet(GrammarSymbol nonterminal,
-      GrammarSymbol terminal) {
-    return this.addFollowSet(nonterminal,
-        new ArrayList<>(Arrays.asList(terminal)));
   }
 
   /**
@@ -112,16 +101,13 @@ public class FollowSets {
     return modified;
   }
 
-  public List<GrammarSymbol> getTerminalList(GrammarSymbol symbol) {
+  public Set<GrammarSymbol> getTerminalSet(GrammarSymbol symbol) {
     Set<GrammarSymbol> oldSet = this.followSetMap.get(symbol);
-    List<GrammarSymbol> symbolList = new ArrayList<>();
     if (oldSet == null) {
-      return symbolList;
+      return new HashSet<>();
+    } else {
+      return new HashSet<>(oldSet);
     }
-    for (GrammarSymbol gS : oldSet) {
-      symbolList.add(new GrammarSymbol(gS));
-    }
-    return symbolList;
   }
 
   public boolean ifHasTerminal(GrammarSymbol nonterminal,
@@ -144,10 +130,8 @@ public class FollowSets {
   public FollowSets copy() {
     FollowSets copy = new FollowSets();
     for (GrammarSymbol gS : this.followSetMap.keySet()) {
-      List<GrammarSymbol> symbolList = new ArrayList<>();
       Set<GrammarSymbol> symbolSet = this.followSetMap.get(gS);
-      symbolList.addAll(symbolSet);
-      copy.addFollowSet(gS, new ArrayList<>(symbolSet));
+      copy.addFollowSet(gS, symbolSet);
     }
     return copy;
   }

@@ -1,30 +1,47 @@
 package analyzer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class SelectSets {
 
-  private List<Production> productionList = new ArrayList<>();
-  private List<List<GrammarSymbol>> terminalsList = new ArrayList<>();
+  private Map<Production, Set<GrammarSymbol>> selectSetMap = new HashMap<>();
 
   public SelectSets() {
 
   }
 
-  public void addItem(Production production, List<GrammarSymbol> terminalList) {
-    this.productionList.add(production);
-    this.terminalsList.add(terminalList);
+  public void addSelectSet(Production production,
+      Set<GrammarSymbol> terminalList) {
+    if (terminalList.size() == 0) {
+      return;
+    }
+    this.selectSetMap.put(production, new HashSet<>(terminalList));
   }
 
-  public List<GrammarSymbol> getTerminalList(Production production) {
-    for (int i = 0; i < this.productionList.size(); i++) {
-      Production nonterminal = this.productionList.get(i);
-      if (nonterminal.equals(production)) {
-        return this.terminalsList.get(i);
-      }
+  public Set<GrammarSymbol> getTerminalSet(Production production) {
+    return new HashSet<>(this.selectSetMap.get(production));
+  }
+
+  public SelectSets copy() {
+    SelectSets copy = new SelectSets();
+    for (Production p : this.selectSetMap.keySet()) {
+      copy.addSelectSet(p, this.selectSetMap.get(p));
     }
-    return new ArrayList<>();
+    return copy;
+  }
+
+  @Override
+  public String toString() {
+    String str = "";
+    for (Production p : this.selectSetMap.keySet()) {
+      Set<GrammarSymbol> symbolSet = this.selectSetMap.get(p);
+      str = str + "production:\n\t" + p.toString() + "select set: "
+          + symbolSet.toString() + "\n";
+    }
+    return str;
   }
 
 }

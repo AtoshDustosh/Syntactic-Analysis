@@ -9,7 +9,8 @@ import java.util.Scanner;
 import data.input.InputFilePaths;
 
 /**
- * Productions of the whole grammar.
+ * Productions of the whole grammar. The LHS of the first production
+ * must be the starting symbol.
  * 
  * @author AtoshDustosh
  */
@@ -34,6 +35,9 @@ public class Productions {
     Productions productions = new Productions();
     productions.loadProductionsFile(InputFilePaths.PRODUCTIONS.getFilePath());
     System.out.println("productions\n" + productions.toString());
+
+    System.out.println("break productions into pieces");
+    System.out.println(productions.breakIntoPieces().toString());
   }
 
   public Production getProduction(int index) {

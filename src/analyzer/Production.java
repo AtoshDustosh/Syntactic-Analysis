@@ -135,6 +135,22 @@ public class Production {
     return result;
   }
 
+  @Override
+  public int hashCode() {
+    String str = this.leftHandSide.toString();
+    for (int i = 0; i < this.rightHandSide.size(); i++) {
+      for (int j = 0; j < this.rightHandSide.get(i).size(); j++) {
+        str = str + this.rightHandSide.get(i).get(j).toString();
+      }
+    }
+    return str.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return this.equals((Production) o);
+  }
+
   private void parseGrammarSymbolList(List<GrammarSymbol> symbolList) {
     if (this.checkGrammarSymbolList(symbolList) == false) {
       System.exit(PRODUCTION_INVALID);

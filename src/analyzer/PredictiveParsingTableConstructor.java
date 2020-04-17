@@ -1,5 +1,7 @@
 package analyzer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +44,11 @@ public class PredictiveParsingTableConstructor {
     pptConstructor.loadProductions(productions);
     System.out
         .println("First Sets: \n" + pptConstructor.getFirstSets().toString());
+    System.out
+        .println("Follow Sets: \n" + pptConstructor.getFollowSets().toString());
+    System.out
+        .println("Select Sets: \n" + pptConstructor.getSelectSets().toString());
+
   }
 
   public void loadProductions(Productions productions) {
@@ -56,6 +63,14 @@ public class PredictiveParsingTableConstructor {
 
   public FirstSets getFirstSets() {
     return this.firstSets.copy();
+  }
+
+  public FollowSets getFollowSets() {
+    return this.followSets.copy();
+  }
+
+  public SelectSets getSelectSets() {
+    return this.selectSets.copy();
   }
 
   private void buildFirstSets() {
@@ -104,7 +119,7 @@ public class PredictiveParsingTableConstructor {
         } else if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
           Set<GrammarSymbol> tempSet = new HashSet<>();
           tempSet.add(symbol);
-          this.firstSets.addFirstSet(LHS, tempSet);
+          this.firstSets.addFirstSet(LHS, new HashSet<>(tempSet));
           if (symbol.equals(new GrammarSymbol("empty"))) {
             emptyCount++;
           }
@@ -115,7 +130,7 @@ public class PredictiveParsingTableConstructor {
             Set<GrammarSymbol> newFirstSet = this.firstSets
                 .getTerminalSet(symbol);
             if (emptyCount == j) {
-              this.firstSets.addFirstSet(LHS, newFirstSet);
+              this.firstSets.addFirstSet(LHS, new HashSet<>(newFirstSet));
             }
             if (newFirstSet.contains(new GrammarSymbol("empty"))) {
               emptyCount++;
@@ -135,7 +150,7 @@ public class PredictiveParsingTableConstructor {
       if (emptyCount == RHS.size()) {
         Set<GrammarSymbol> tempSet = new HashSet<>();
         tempSet.add(new GrammarSymbol("empty"));
-        this.firstSets.addFirstSet(LHS, tempSet);
+        this.firstSets.addFirstSet(LHS, new HashSet<>(tempSet));
       } else {
         this.firstSets.removeFirstSetItem(LHS, new GrammarSymbol("empty"));
       }
@@ -148,19 +163,87 @@ public class PredictiveParsingTableConstructor {
     if (this.firstSetBuilt == false) {
       this.buildFirstSets();
     }
-    /*
-     * TODO
-     */
+    boolean modified = false;
+    do {
+      modified = this.traverseBuildFollowSets();
+    } while (modified);
     this.followSetBuilt = true;
+  }
+
+  /**
+   * Traverse all productions and build Follow Sets for grammar symbols
+   * in them.
+   * 
+   * @return true if modified FollowSets after this traverse; false
+   *         otherwise
+   */
+  private boolean traverseBuildFollowSets() {
+    boolean modified = false;
+    for (int i = 0; i < this.productions.size(); i++) {
+      Production production = this.productions.getProduction(i);
+      GrammarSymbol LHS = production.getLHS();
+      List<List<GrammarSymbol>> rhsList = production.getRHSlist();
+      if (i == 0) {
+        Set<GrammarSymbol> tempFollowSet = new HashSet<>();
+        tempFollowSet.add(new GrammarSymbol("$"));
+        modified = modified || this.followSets.addFollowSet(LHS, tempFollowSet);
+      }
+//      System.out.println("process production: \n" + production);
+      for (int j = 0; j < rhsList.size(); j++) {
+        List<GrammarSymbol> RHS = rhsList.get(j);
+        for (int k = 0; k < RHS.size(); k++) {
+          GrammarSymbol symbol = RHS.get(k);
+          if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
+            continue;
+          } else if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
+            Set<GrammarSymbol> lhsFollowSet = this.followSets
+                .getTerminalSet(LHS);
+            if (k == RHS.size() - 1) {
+              modified = modified
+                  || this.followSets.addFollowSet(symbol, lhsFollowSet);
+            } else {
+              Set<GrammarSymbol> subRHSfirstSet = new HashSet<>();
+              List<GrammarSymbol> subRHS = new ArrayList<>();
+              if (k + 1 == RHS.size() - 1) {
+                subRHS = new ArrayList<>(
+                    Arrays.asList(RHS.get(RHS.size() - 1)));
+              } else {
+                subRHS = RHS.subList(k + 1, RHS.size());
+              }
+              subRHSfirstSet = this.firstSetofSymbolList(subRHS);
+              modified = modified
+                  || this.followSets.addFollowSet(symbol, subRHSfirstSet);
+              if (subRHSfirstSet.contains(new GrammarSymbol("empty"))) {
+                modified = modified
+                    || this.followSets.addFollowSet(symbol, lhsFollowSet);
+              }
+            } // end of judging whether k is the last of RHS
+          } // end of judging symbol being terminal or nonterminal
+        } // end of loop (k)
+      } // end of loop (j)
+    } //end of loop (i)
+    return modified;
   }
 
   private void buildSelectSets() {
     if (this.followSetBuilt == false) {
       this.buildFollowSets();
     }
-    /*
-     * TODO
-     */
+    Productions brokenProductions = this.productions.breakIntoPieces();
+    for (int i = 0; i < brokenProductions.size(); i++) {
+      Production piece = brokenProductions.getProduction(i);
+      GrammarSymbol LHS = piece.getLHS();
+      List<GrammarSymbol> RHS = piece.getRHSlist().get(0);
+      Set<GrammarSymbol> rhsFirstSet = this.firstSetofSymbolList(RHS);
+      if (rhsFirstSet.contains(new GrammarSymbol("empty"))) {
+        Set<GrammarSymbol> lhsFollowSet = this.followSets.getTerminalSet(LHS);
+        rhsFirstSet.remove(new GrammarSymbol("empty"));
+        this.selectSets.addSelectSet(piece, rhsFirstSet);
+        this.selectSets.addSelectSet(piece, lhsFollowSet);
+      } else {
+        this.selectSets.addSelectSet(piece, rhsFirstSet);
+      }
+    }
     this.selectSetBuilt = true;
   }
 
