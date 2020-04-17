@@ -1,5 +1,7 @@
 package analyzer;
 
+import java.util.Stack;
+
 /**
  * A multi-branch tree to show the syntax structure
  * 
@@ -34,6 +36,55 @@ public class MutiWayTree {
    */
   public void backToTheRoot() {
     this.node_Current = this.rootNode;
+  }
+
+  /**
+   * set CurrentNode
+   */
+  public void setCurrentNode(Node n) {
+    node_Current = n;
+  }
+
+  /**
+   * 返回节点的层级数
+   * 
+   * @param n
+   * @return
+   */
+  public int getLayer(Node n) {
+    int layer = 0;
+    while (n != rootNode) {
+      n = n.getParent();
+      layer++;
+    }
+    return layer;
+
+  }
+
+  @Override
+  public String toString() {
+    String treeString = "";
+
+    Stack<Node> treeStack = new Stack<>();
+    treeStack.push(rootNode);
+    do {
+      Node currentNode = treeStack.pop();
+      String layerString = "";
+      int layer = getLayer(currentNode);
+      for (int i = 0; i < layer; i++) {
+        layerString += "\t";
+      }
+
+      System.out.println(layerString + currentNode.getGrammaSymbol().toString());
+
+
+      for (int i = currentNode.getChildrenList().size() - 1; i >= 0; i--) {
+        treeStack.push(currentNode.getChildrenList().get(i));
+      }
+
+    } while (!treeStack.isEmpty());
+
+    return treeString;
   }
 
 }
