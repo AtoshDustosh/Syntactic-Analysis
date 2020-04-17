@@ -24,21 +24,20 @@ public class Productions {
   private Set<GrammarSymbol> nonterminalSet = new HashSet<>();
   private Set<GrammarSymbol> terminalSet = new HashSet<>();
 
-  public Productions() {
-
-  }
-
   public Productions(List<Production> productionList) {
     this.productionList = productionList;
+    this.collectStatistics();
   }
 
   public Productions(String filePath) {
     this.productionsFilePath = filePath;
+    this.loadProductionsFile();
+    this.collectStatistics();
   }
 
   public static void main(String[] args) {
-    Productions productions = new Productions();
-    productions.loadProductionsFile(InputFilePaths.PRODUCTIONS.getFilePath());
+    Productions productions = new Productions(
+        InputFilePaths.PRODUCTIONS.getFilePath());
     System.out.println("productions\n" + productions.toString());
 
     System.out.println("break productions into pieces");
@@ -61,12 +60,6 @@ public class Productions {
 
   public int size() {
     return this.productionList.size();
-  }
-
-  public void loadProductionsFile(String filePath) {
-    this.productionsFilePath = filePath;
-    this.loadProductionsFile();
-//    this.breakProductionsIntoPieces();
   }
 
   /**
@@ -96,11 +89,22 @@ public class Productions {
     return new HashSet<>(this.terminalSet);
   }
 
+  public Productions copy() {
+    List<Production> productionList = new ArrayList<>();
+    for (int i = 0; i < this.productionList.size(); i++) {
+      productionList.add(this.productionList.get(i));
+    }
+    return new Productions(productionList);
+  }
+
   @Override
   public String toString() {
     String str = "";
     for (int i = 0; i < this.productionList.size(); i++) {
-      str = str + this.productionList.get(i).toString() + "\n\n";
+      str = str + this.productionList.get(i).toString() + "\n";
+    }
+    if (this.productionList.size() == 0) {
+      str = "(empty)";
     }
     return str;
   }
@@ -147,6 +151,33 @@ public class Productions {
       }
     }
     return symbolList;
+  }
+
+  /**
+   * Collect statistics of nonterminals and terminals
+   */
+  private void collectStatistics() {
+    for (int i = 0; i < this.productionList.size(); i++) {
+      Production production = this.productionList.get(i);
+      GrammarSymbol LHS = production.getLHS();
+      List<List<GrammarSymbol>> rhsList = production.getRHSlist();
+      for (int j = 0; j < rhsList.size(); j++) {
+        List<GrammarSymbol> RHS = rhsList.get(j);
+        for (int k = 0; k < RHS.size(); k++) {
+          GrammarSymbol symbol = RHS.get(k);
+          if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
+            this.nonterminalSet.add(symbol);
+          } else if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
+            this.terminalSet.add(symbol);
+          }
+        }
+      } // end of processing "rhsList"
+      if (LHS.getType().equals(GrammarSymbolType.NONTERMINAL)) {
+        this.nonterminalSet.add(LHS);
+      } else if (LHS.getType().equals(GrammarSymbolType.TERMINAL)) {
+        this.terminalSet.add(LHS);
+      }
+    }
   }
 
   /**

@@ -24,32 +24,30 @@ public class PredictiveParsingTableConstructor {
   private PredictiveParsingTable ppTable = null;
   private boolean ppTableBuilt = false;
 
-  public PredictiveParsingTableConstructor() {
-
-  }
-
   public PredictiveParsingTableConstructor(Productions productions) {
     this.loadProductions(productions);
   }
 
   public static void main(String[] args) {
-    Productions productions = new Productions();
-    PredictiveParsingTableConstructor pptConstructor = new PredictiveParsingTableConstructor();
+    Productions productions = new Productions(
+        InputFilePaths.PRODUCTIONS.getFilePath());
+    PredictiveParsingTableConstructor pptConstructor = new PredictiveParsingTableConstructor(
+        productions);
 
-    productions.loadProductionsFile(InputFilePaths.PRODUCTIONS.getFilePath());
     System.out.println("Productions: \n" + productions.toString());
+    System.out.println("... data loaded");
 
-    pptConstructor.loadProductions(productions);
     System.out
         .println("First Sets: \n" + pptConstructor.getFirstSets().toString());
     System.out
         .println("Follow Sets: \n" + pptConstructor.getFollowSets().toString());
     System.out
         .println("Select Sets: \n" + pptConstructor.getSelectSets().toString());
+    System.out.println(pptConstructor.getPPTable().toString());
 
   }
 
-  public void loadProductions(Productions productions) {
+  private void loadProductions(Productions productions) {
     this.productions = productions;
     this.buildFirstSets();
     this.buildFollowSets();
@@ -59,9 +57,6 @@ public class PredictiveParsingTableConstructor {
     } else {
       System.out.println("error: not LL(1) grammar\n");
     }
-    /*
-     * TODO add construction of predictive parsing table
-     */
   }
 
   public FirstSets getFirstSets() {
@@ -259,10 +254,15 @@ public class PredictiveParsingTableConstructor {
       this.buildSelectSets();
     }
     this.ppTable = new PredictiveParsingTable(this.productions);
-    /*
-     * TODO build the table entries
-     */
-    System.out.println("ppTable not built\n");
+    Productions pieces = this.productions.breakIntoPieces();
+    for (int i = 0; i < pieces.size(); i++) {
+      Production piece = pieces.getProduction(i);
+      Set<GrammarSymbol> pieceSelectSet = this.selectSets.getTerminalSet(piece);
+      GrammarSymbol LHS = piece.getLHS();
+      for (GrammarSymbol symbol : pieceSelectSet) {
+        this.ppTable.setProductionTableEntry(LHS, symbol, piece);
+      }
+    }
     this.ppTableBuilt = true;
   }
 
@@ -280,6 +280,9 @@ public class PredictiveParsingTableConstructor {
       GrammarSymbol symbol = list.get(i);
       if (symbol.getType().equals(GrammarSymbolType.TERMINAL)) {
         firstSet.add(new GrammarSymbol(symbol));
+        if (symbol.equals(new GrammarSymbol("empty"))) {
+          emptyCount++;
+        }
         break;
       } else if (symbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
         Set<GrammarSymbol> symbolFirstSet = this.firstSets

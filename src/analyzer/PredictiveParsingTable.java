@@ -1,26 +1,51 @@
 package analyzer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 public class PredictiveParsingTable {
 
   private Map<GrammarSymbol, Integer> rowIndexMap = new HashMap<>(); // nonterminal to integer
   private Map<GrammarSymbol, Integer> columnIndexMap = new HashMap<>(); // terminal to integer
-  private Vector<Vector<Production>> analysisTable = new Vector<>();
-  private Vector<Vector<Boolean>> synchTable = new Vector<>();
+  private List<List<Production>> analysisTable = new ArrayList<>();
+  private List<List<Boolean>> synchTable = new ArrayList<>();
 
-  public PredictiveParsingTable(Set<GrammarSymbol> rowSet,
-      Set<GrammarSymbol> columnSet) {
-    this.initializeTable(rowSet, columnSet);
-  }
+  private Productions productions = new Productions(new ArrayList<>());
 
   public PredictiveParsingTable(Productions productions) {
-    this.initializeTable(productions.getNonterminalSet(),
-        productions.getTerminalSet());
+    this.productions = productions;
+    Set<GrammarSymbol> rowSet = productions.getNonterminalSet();
+    Set<GrammarSymbol> columnSet = productions.getTerminalSet();
+    int rowIndex = 0;
+    int columnIndex = 0;
+    // initialize the maps
+    columnSet.remove(new GrammarSymbol("empty"));
+    columnSet.add(new GrammarSymbol("$"));
+    for (GrammarSymbol symbol : rowSet) {
+      this.rowIndexMap.put(symbol, rowIndex++);
+    }
+    for (GrammarSymbol symbol : columnSet) {
+      this.columnIndexMap.put(symbol, columnIndex++);
+    }
+    if (rowSet.size() == 0 || columnSet.size() == 0) {
+      return;
+    }
+    // initialize the tables
+    for (int i = 0; i < rowIndex; i++) {
+      List<Production> analysisTableRow = new ArrayList<>();
+      List<Boolean> synchTableRow = new ArrayList<>();
+      for (int j = 0; j < columnIndex; j++) {
+        analysisTableRow.add(new Production());
+        synchTableRow.add(false);
+      }
+      this.analysisTable.add(analysisTableRow);
+      this.synchTable.add(synchTableRow);
+    }
+
   }
 
   public int getRowCount() {
@@ -29,6 +54,10 @@ public class PredictiveParsingTable {
 
   public int getColumnCount() {
     return this.columnIndexMap.keySet().size();
+  }
+
+  public Productions getProductions() {
+    return this.productions.copy();
   }
 
   public boolean setProductionTableEntry(GrammarSymbol nonterminal,
@@ -102,42 +131,53 @@ public class PredictiveParsingTable {
 
   public PredictiveParsingTable copy() {
     PredictiveParsingTable ppTable = new PredictiveParsingTable(
-        this.rowIndexMap.keySet(), this.columnIndexMap.keySet());
+        this.productions);
     for (GrammarSymbol rowSymbol : this.rowIndexMap.keySet()) {
       for (GrammarSymbol columnSymbol : this.columnIndexMap.keySet()) {
         ppTable.setProductionTableEntry(rowSymbol, columnSymbol,
-            new Production());
+            this.getProductionTableEntry(rowSymbol, columnSymbol));
         ppTable.setSynchTableEntry(rowSymbol, columnSymbol, false);
       }
     }
     return ppTable;
   }
 
-  private void initializeTable(Set<GrammarSymbol> rowSet,
-      Set<GrammarSymbol> columnSet) {
-    int rowIndex = 0;
-    int columnIndex = 0;
-    // initialize the maps
-    for (GrammarSymbol symbol : rowSet) {
-      this.rowIndexMap.put(symbol, rowIndex++);
+  @Override
+  public String toString() {
+    String str = "";
+    Productions piecesProductions = this.productions.breakIntoPieces();
+    Map<Production, Integer> productionSerialNumMap = new HashMap<>();
+    str = str + "Serial numbers of productions\n";
+    for (int i = 0; i < piecesProductions.size(); i++) {
+      str = str + "(" + (i + 1) + ")\n "
+          + piecesProductions.getProduction(i);
+      productionSerialNumMap.put(piecesProductions.getProduction(i), (i + 1));
     }
-    for (GrammarSymbol symbol : columnSet) {
-      this.columnIndexMap.put(symbol, columnIndex++);
+    List<GrammarSymbol> rowList = new ArrayList<>(this.rowIndexMap.keySet());
+    List<GrammarSymbol> columnList = new ArrayList<>(
+        this.columnIndexMap.keySet());
+    str = str + "\t";
+    for (int i = 0; i < columnList.size(); i++) {
+      str = str + columnList.get(i).getName() + "\t";
     }
-    if (rowSet.size() == 0 || columnSet.size() == 0) {
-      rowIndex = 1;
-      columnIndex = 1;
-    }
-    // initialize the tables
-    for (int i = 0; i < rowIndex; i++) {
-      Vector<Production> analysisTableRow = new Vector<>();
-      Vector<Boolean> synchTableRow = new Vector<>();
-      for (int j = 0; j < columnIndex; j++) {
-        analysisTableRow.add(new Production());
-        synchTableRow.add(false);
+    str = str + "\n";
+    for (int i = 0; i < rowList.size(); i++) {
+      str = str + rowList.get(i).getName() + "\t";
+      for (int j = 0; j < columnList.size(); j++) {
+        Production p = this.getProductionTableEntry(rowList.get(i),
+            columnList.get(j));
+        if (p.equals(new Production())) {
+          str = str + null + "\t";
+        } else {
+          if (productionSerialNumMap.get(p) == null) {
+            str = str + null + "\t";
+          } else {
+            str = str + productionSerialNumMap.get(p) + "\t";
+          }
+        }
       }
-      this.analysisTable.add(analysisTableRow);
-      this.synchTable.add(synchTableRow);
+      str = str + "\n";
     }
+    return str;
   }
 }

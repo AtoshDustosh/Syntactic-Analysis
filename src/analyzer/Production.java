@@ -101,16 +101,16 @@ public class Production {
   @Override
   public String toString() {
     String str = "";
-    str = str + this.leftHandSide.getName() + " ->";
+    str = str + this.leftHandSide.getName() + "\t->";
     for (int i = 0; i < this.rightHandSide.size(); i++) {
       String rhsPiece = "";
       List<GrammarSymbol> productionPiece = this.rightHandSide.get(i);
       for (int j = 0; j < productionPiece.size(); j++) {
-        rhsPiece = rhsPiece + productionPiece.get(j).toString() + " ";
+        rhsPiece = rhsPiece + productionPiece.get(j).getName().toString() + " ";
       }
       rhsPiece = "\t" + rhsPiece;
       if (i > 0) {
-        rhsPiece = " or" + rhsPiece;
+        rhsPiece = "\tor" + rhsPiece;
       }
       str = str + rhsPiece + "\n";
     }
@@ -119,17 +119,17 @@ public class Production {
 
   public boolean equals(Production production) {
     GrammarSymbol LHS = production.getLHS();
-    List<List<GrammarSymbol>> RHS = production.getRHSlist();
+    List<List<GrammarSymbol>> rhsList = production.getRHSlist();
     boolean result = LHS.equals(this.leftHandSide);
-    result = result && (RHS.size() == this.rightHandSide.size());
+    result = result && (rhsList.size() == this.rightHandSide.size());
     if (result == false) {
       return false;
     }
-    for (int i = 0; i < RHS.size(); i++) {
-      List<GrammarSymbol> thatList = RHS.get(i);
-      for (int j = 0; j < RHS.get(i).size(); j++) {
-        List<GrammarSymbol> thisList = this.rightHandSide.get(j);
-        result = result && (thatList.equals(thisList));
+    for (int i = 0; i < rhsList.size(); i++) {
+      List<GrammarSymbol> thatRHS = rhsList.get(i);
+      for (int j = 0; j < this.rightHandSide.size(); j++) {
+        List<GrammarSymbol> thisRHS = this.rightHandSide.get(j);
+        result = result && (thatRHS.equals(thisRHS));
       }
     }
     return result;

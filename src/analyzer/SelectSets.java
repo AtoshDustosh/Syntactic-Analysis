@@ -22,7 +22,11 @@ public class SelectSets {
   }
 
   public Set<GrammarSymbol> getTerminalSet(Production production) {
-    return new HashSet<>(this.selectSetMap.get(production));
+    if (this.selectSetMap.containsKey(production)) {
+      return new HashSet<>(this.selectSetMap.get(production));
+    } else {
+      return new HashSet<>();
+    }
   }
 
   public SelectSets copy() {
