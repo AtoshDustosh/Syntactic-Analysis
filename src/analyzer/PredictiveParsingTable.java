@@ -181,19 +181,4 @@ public class PredictiveParsingTable {
 
     return str;
   }
-
-  /**
-   * Get the grammar symbol whose name is the longest.
-   * 
-   * @return longest grammar symbol
-   */
-  private String maxLengthGrammarSymbolName() {
-    String maxLengthName = "";
-    for (GrammarSymbol symbol : this.productions.getNonterminalSet()) {
-      if (symbol.getName().length() > maxLengthName.length()) {
-        maxLengthName = symbol.getName();
-      }
-    }
-    return maxLengthName;
-  }
 }
