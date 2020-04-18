@@ -24,7 +24,7 @@ import data.output.OutputFilePaths;
 public class LexicalAnalyzer {
   public static final String errorLogFilePath = OutputFilePaths.LEXICAL_ERROR_LOG
       .getFilePath();
-  public static final String testFilePath = InputFilePaths.LEXICAL_TEST_1
+  public static final String testFilePath = InputFilePaths.SYNTACTIC_TEST_1
       .getFilePath();
 
   public static final String ANALYSIS_ERROR = "analysis error";
@@ -122,6 +122,8 @@ public class LexicalAnalyzer {
       }
     }
 
+    this.tokens.add(this.tokens.wordTypeToSerialNumber("$"), "$",
+        new Location(-1, -1));
     this.errorLogFileWriter.close();
     return this.tokens.getTokensCopy();
   }

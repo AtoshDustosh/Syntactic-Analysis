@@ -13,7 +13,7 @@ proc int main(){
 	array[2] = 3;
 	call add(array[1], array[2]);
 	
-	if(array[1] < array[2]) then {
+	if(array[1] == array[2]) then {
 		int temp;
 		temp = array[1];
 		array[1] = array[2];
@@ -24,7 +24,7 @@ proc int main(){
 		array[2] = array[1];
 		array[1] = temp;
 	}
-		while(number < 10) do {
+		while(number == 10) do {
 		number = number+1;
 	};
 };

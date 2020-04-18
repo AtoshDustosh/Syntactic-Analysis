@@ -20,6 +20,7 @@ public class SynaticAnalysisExecutor {
    */
   public void initializeTokenMap() {
     this.tokenToTerminal = new HashMap<>();
+
     this.tokenToTerminal.put(1, new GrammarSymbol("id"));
     this.tokenToTerminal.put(2, new GrammarSymbol("number"));
     this.tokenToTerminal.put(3, new GrammarSymbol("number"));
@@ -74,8 +75,7 @@ public class SynaticAnalysisExecutor {
     this.tokenToTerminal.put(49, new GrammarSymbol("\\|\\|"));
     this.tokenToTerminal.put(50, new GrammarSymbol("then"));
 
-    this.tokenToTerminal.put(51, new GrammarSymbol("$"));
-
+    this.tokenToTerminal.put(99, new GrammarSymbol("$"));
   }
 
   public SynaticAnalysisExecutor() {
@@ -153,7 +153,7 @@ public class SynaticAnalysisExecutor {
       tokenNumString = tokenStringArray[0];
       String row = "last";
       String column = "last";
-      if (!tokenNumString.equals("58")) {
+      if (!tokenNumString.equals("51")) {
         row = tokenStringArray[2].replace("(", "");
         column = tokenStringArray[3].replace(")", "");
       }
@@ -170,7 +170,7 @@ public class SynaticAnalysisExecutor {
         // ÖÕ½á·û´íÎóÅÐ¶Ï¿ªÊ¼
         if (!top.equals(tokenGS)) {
           errorString += "(" + row + "," + column + ")" + "\n";
-          System.out.println("error: " + errorString);
+          System.out.println("error: " + errorString + tokenGS + top);
           k--;
           continue;
         }
@@ -189,12 +189,12 @@ public class SynaticAnalysisExecutor {
         if (pbreak.equals(new Production())) {
           if (ppt.getSynchTableEntry(top, tokenGS)) {
             errorString += "(" + row + "," + column + ")" + "\n";
-            System.out.println("error: " + errorString);
+            System.out.println("error: " + errorString + tokenGS + top);
             k--;
             continue;
           } else {
             errorString += "(" + row + "," + column + ")" + "\n";
-            System.out.println("error: " + errorString);
+            System.out.println("error: " + errorString + tokenGS + top);
             stateStack.push(topNode);
             continue;
           }
