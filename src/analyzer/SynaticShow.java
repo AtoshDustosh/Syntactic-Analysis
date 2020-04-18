@@ -86,11 +86,6 @@ public class SynaticShow extends JFrame {
     panel.add(lblToken);
     lblToken.setFont(new Font("华文隶书", Font.PLAIN, 18));
 
-    textField_ProductionShow = new JTextField();
-    textField_ProductionShow.setBounds(562, 36, 253, 21);
-    panel.add(textField_ProductionShow);
-    textField_ProductionShow.setColumns(10);
-
     label_1 = new JLabel("\u8BE6\u7EC6\u4EA7\u751F\u5F0F");
     label_1.setBounds(585, 10, 132, 33);
     panel.add(label_1);
@@ -106,6 +101,14 @@ public class SynaticShow extends JFrame {
     button_ChangeSize.setFont(new Font("楷体", Font.PLAIN, 18));
     button_ChangeSize.setBounds(837, 16, 121, 39);
     panel.add(button_ChangeSize);
+
+    JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setBounds(553, 37, 244, 20);
+    panel.add(scrollPane);
+
+    textField_ProductionShow = new JTextField();
+    scrollPane.setViewportView(textField_ProductionShow);
+    textField_ProductionShow.setColumns(10);
 
     scrollPane_GrammaTree = new JScrollPane();
     scrollPane_GrammaTree.setBounds(908, 25, 286, 381);
@@ -256,8 +259,12 @@ public class SynaticShow extends JFrame {
             // 填充单个表项
             if (!prtc.getPPTable().getProductionTableEntry(nonterminal, terminal)
                 .equals(new Production())) {
-              singleTableValue =
-                  prtc.getPPTable().getProductionTableEntry(nonterminal, terminal).toString();
+              singleTableValue = prtc.getPPTable().getProductionTableEntry(nonterminal, terminal)
+                  .getLHS().getName() + "->";
+              for (GrammarSymbol gs : prtc.getPPTable()
+                  .getProductionTableEntry(nonterminal, terminal).getRHSlist().get(0)) {
+                singleTableValue += " " + gs.getName();
+              }
             } else {
               if (prtc.getPPTable().getSynchTableEntry(nonterminal, terminal)) {
                 singleTableValue = "synch";
