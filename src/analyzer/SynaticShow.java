@@ -74,13 +74,13 @@ public class SynaticShow extends JFrame {
     this.textField_ProductionsFormat.setBounds(10, 36, 237, 21);
     this.panel.add(this.textField_ProductionsFormat);
     this.textField_ProductionsFormat
-        .setText("src/data/input/productions1.format");
+        .setText("src/data/input/productions.format");
     this.textField_ProductionsFormat.setColumns(10);
 
     this.textField_TokenPath = new JTextField();
     this.textField_TokenPath.setBounds(270, 36, 253, 21);
     this.panel.add(this.textField_TokenPath);
-    this.textField_TokenPath.setText("src/data/input/tokens.token");
+    this.textField_TokenPath.setText("src/test/synTest1.token");
     this.textField_TokenPath.setColumns(10);
 
     JLabel lblToken = new JLabel("token\u6587\u4EF6");

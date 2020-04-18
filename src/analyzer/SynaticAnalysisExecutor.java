@@ -36,7 +36,7 @@ public class SynaticAnalysisExecutor {
     this.tokenToTerminal.put(14, new GrammarSymbol("else"));
     this.tokenToTerminal.put(15, new GrammarSymbol("do"));
     this.tokenToTerminal.put(16, new GrammarSymbol("while"));
-    this.tokenToTerminal.put(17, new GrammarSymbol("function"));
+    this.tokenToTerminal.put(17, new GrammarSymbol("proc"));
     this.tokenToTerminal.put(18, new GrammarSymbol("call"));
     this.tokenToTerminal.put(19, new GrammarSymbol("+"));
     this.tokenToTerminal.put(20, new GrammarSymbol("-"));
@@ -73,15 +73,8 @@ public class SynaticAnalysisExecutor {
     this.tokenToTerminal.put(48, new GrammarSymbol("&&"));
     this.tokenToTerminal.put(49, new GrammarSymbol("\\|\\|"));
     this.tokenToTerminal.put(50, new GrammarSymbol("then"));
-    this.tokenToTerminal.put(51, new GrammarSymbol("proc"));
-    this.tokenToTerminal.put(52, new GrammarSymbol("and"));
-    this.tokenToTerminal.put(53, new GrammarSymbol("not"));
-    this.tokenToTerminal.put(54, new GrammarSymbol("or"));
-    this.tokenToTerminal.put(55, new GrammarSymbol("case"));
-    this.tokenToTerminal.put(56, new GrammarSymbol("default"));
-    this.tokenToTerminal.put(57, new GrammarSymbol("char"));
 
-    this.tokenToTerminal.put(55, new GrammarSymbol("$"));
+    this.tokenToTerminal.put(51, new GrammarSymbol("$"));
 
   }
 
@@ -160,7 +153,7 @@ public class SynaticAnalysisExecutor {
       tokenNumString = tokenStringArray[0];
       String row = "last";
       String column = "last";
-      if (!tokenNumString.equals("51")) {
+      if (!tokenNumString.equals("58")) {
         row = tokenStringArray[2].replace("(", "");
         column = tokenStringArray[3].replace(")", "");
       }
@@ -177,6 +170,7 @@ public class SynaticAnalysisExecutor {
         // ÖÕ½á·û´íÎóÅÐ¶Ï¿ªÊ¼
         if (!top.equals(tokenGS)) {
           errorString += "(" + row + "," + column + ")" + "\n";
+          System.out.println("error: " + errorString);
           k--;
           continue;
         }
@@ -195,10 +189,12 @@ public class SynaticAnalysisExecutor {
         if (pbreak.equals(new Production())) {
           if (ppt.getSynchTableEntry(top, tokenGS)) {
             errorString += "(" + row + "," + column + ")" + "\n";
+            System.out.println("error: " + errorString);
             k--;
             continue;
           } else {
             errorString += "(" + row + "," + column + ")" + "\n";
+            System.out.println("error: " + errorString);
             stateStack.push(topNode);
             continue;
           }
@@ -252,7 +248,7 @@ public class SynaticAnalysisExecutor {
    * @param args
    */
   public static void main(String[] args) {
-    // "src/data/input/productions1.format"
+    // "src/data/input/productions.format"
     // "src/data/input/tokens.token"
     System.out.println(new SynaticAnalysisExecutor()
         .SynaticAnalysis("src/data/input/productions.format",

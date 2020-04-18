@@ -11,7 +11,7 @@ proc int main(){
 	number = 2;
 	array[1] = 2;
 	array[2] = 3;
-	call(array[1], array[2]);
+	call add(array[1], array[2]);
 	
 	if(array[1] < array[2]) then {
 		int temp;
