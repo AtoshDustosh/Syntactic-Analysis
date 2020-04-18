@@ -18,15 +18,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import analyzer.FirstSets;
-import analyzer.FollowSets;
-import analyzer.GrammarSymbol;
-import analyzer.MutiWayTree;
-import analyzer.PredictiveParsingTableConstructor;
-import analyzer.Production;
-import analyzer.Productions;
-import analyzer.SelectSets;
-import analyzer.SynaticAnalysisExecutor;
 
 public class SynaticShow extends JFrame {
 
@@ -116,7 +107,8 @@ public class SynaticShow extends JFrame {
         Set<GrammarSymbol> firstGrammaSet = first.getGrammaSet();
         Set<GrammarSymbol> followGrammaSet = follow.getGrammaSet();
 
-        Set<Production> selectProducitonSet = select.getProductionSet();
+        Productions selectProductions = prtc.getPPTable().getProductions().breakIntoPieces();
+
         // 变量准备-结束
 
         // firstfollow-开始
@@ -150,9 +142,14 @@ public class SynaticShow extends JFrame {
 
         // select开始
         ArrayList<String[]> grammaSelectTable = new ArrayList<>();
-        for (Production production : selectProducitonSet) {
+        for (int i = 0; i < selectProductions.size(); i++) {
+          Production production = selectProductions.getProduction(i);
           String selectlineString = "";
-          String selectProductionString = production.toString();
+          String selectProductionString = production.getLHS().getName() + "-->";
+          for (int j = 0; j < production.getRHSlist().get(0).size(); j++) {
+            selectProductionString += production.getRHSlist().get(0).get(j).getName() + " ";
+          }
+          selectProductionString += "";
 
           Set<GrammarSymbol> selectSet = select.getSelectSet(production);
           for (GrammarSymbol selectgs : selectSet) {
@@ -161,10 +158,13 @@ public class SynaticShow extends JFrame {
           String[] singleline = {selectProductionString, selectlineString};
           grammaSelectTable.add(singleline);
         }
+
         String[] selectcolumn = {"产生式", "Select集合"};
         String[][] grammaSelectTableInput = new String[grammaSelectTable.size()][];
-        grammafirstfollowTable.toArray(grammaSelectTableInput);
-        initialSelect(table_Select, scrollPane_Select, selectcolumn, grammafirstfollowTableInput);
+        for (int i = 0; i < grammaSelectTable.size(); i++) {
+          grammaSelectTableInput[i] = grammaSelectTable.get(i);
+        }
+        initialSelect(table_Select, scrollPane_Select, selectcolumn, grammaSelectTableInput);
 
         // select结束
         // table开始
