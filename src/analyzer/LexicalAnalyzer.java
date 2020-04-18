@@ -103,12 +103,15 @@ public class LexicalAnalyzer {
         char errorChar = this.chList.get(0);
         if (errorChar != '\n') { // this is a bad patch - made according to  the program
           this.writeErrorLog(charSerialNumber - this.chPointer);
-          charSerialNumber = charSerialNumber - this.chPointer + 1;
         }
+        charSerialNumber = charSerialNumber - this.chPointer + 1;
         this.chList.remove(0);
         this.chPointer = 0;
       } else {
-        Token token = this.buildToken(this.analyzedWordType, this.chPointer);
+        Location location = this.chLocationMap
+            .get(charSerialNumber - this.chPointer);
+        Token token = this.buildToken(this.analyzedWordType, this.chPointer,
+            location);
         for (int i = 0; i < this.chPointer; i++) {
           this.chList.remove(0);
         }
@@ -166,7 +169,8 @@ public class LexicalAnalyzer {
     }
   }
 
-  private Token buildToken(String wordType, int borderIndex) {
+  private Token buildToken(String wordType, int borderIndex,
+      Location location) {
     int wordSerialNumber = 0;
     String wordValue = "";
     for (int i = 0; i < borderIndex; i++) {
@@ -179,7 +183,7 @@ public class LexicalAnalyzer {
     } else {
       wordSerialNumber = this.tokens.wordTypeToSerialNumber(wordType);
     }
-    return new Token(wordSerialNumber, wordValue);
+    return new Token(wordSerialNumber, wordValue, location);
   }
 
   private void convertFileIntoCharList(String filePath) {

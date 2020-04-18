@@ -35,12 +35,12 @@ public class Tokens {
     this.loadWordSerialNumberFile(wordSerialNumberFilePath);
   }
 
-  public void add(String wordType, String wordValue) {
-    this.add(this.wordTypeToSerialNumber(wordType), wordValue);
+  public void add(String wordType, String wordValue, Location location) {
+    this.add(this.wordTypeToSerialNumber(wordType), wordValue, location);
   }
 
-  public void add(int wordSerialNumber, String wordValue) {
-    this.tokenList.add(new Token(wordSerialNumber, wordValue));
+  public void add(int wordSerialNumber, String wordValue, Location location) {
+    this.tokenList.add(new Token(wordSerialNumber, wordValue, location));
   }
 
   public void add(Token newToken) {
@@ -104,7 +104,7 @@ public class Tokens {
     for (int i = 0; i < this.tokenList.size(); i++) {
       Token token = this.tokenList.get(i);
       str = str + "[" + this.wordSerialNumberToType(token.getWordSerialNumber())
-          + ", " + token.getWordValue() + "]\n";
+          + ", " + token.getWordValue() + "] - " + token.getLocation() + "\n";
     }
     return str;
   }

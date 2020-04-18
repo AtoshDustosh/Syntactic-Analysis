@@ -10,6 +10,11 @@ public class Location {
     this.column = column;
   }
 
+  public Location(Location location) {
+    this.row = location.getRow();
+    this.column = location.getColumn();
+  }
+
   public void changeLocation(int row, int column) {
     this.row = row;
     this.column = column;

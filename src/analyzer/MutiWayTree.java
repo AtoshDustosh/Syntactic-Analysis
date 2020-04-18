@@ -78,7 +78,7 @@ public class MutiWayTree {
       System.out.println(layerString + currentNode.getGrammaSymbol().toString());
 
 
-      for (int i = currentNode.getChildrenList().size() - 1; i >= 0; i--) {
+      for (int i = 0; i < currentNode.getChildrenList().size(); i++) {
         treeStack.push(currentNode.getChildrenList().get(i));
       }
 
