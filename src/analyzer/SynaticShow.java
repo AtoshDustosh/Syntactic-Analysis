@@ -30,6 +30,7 @@ public class SynaticShow extends JFrame {
   private JTextField textField_TokenPath;
   private JTextField textField_ProductionShow;
   private JLabel label_1;
+  private JPanel panel;
 
   /**
    * Launch the application.
@@ -52,43 +53,113 @@ public class SynaticShow extends JFrame {
    */
   public SynaticShow() {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setBounds(100, 100, 1230, 526);
+    setBounds(100, 100, 1355, 694);
     contentPane = new JPanel();
     contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
     setContentPane(contentPane);
     contentPane.setLayout(null);
 
-    JScrollPane scrollPane_FirstAndFollow = new JScrollPane();
-    scrollPane_FirstAndFollow.setBounds(10, 10, 266, 381);
-    contentPane.add(scrollPane_FirstAndFollow);
+    panel = new JPanel();
+    panel.setBounds(40, 424, 1113, 78);
+    contentPane.add(panel);
+    panel.setLayout(null);
 
-    table_FirstAndFollow = new JTable();
-    scrollPane_FirstAndFollow.setViewportView(table_FirstAndFollow);
+    JLabel label = new JLabel("\u4EA7\u751F\u5F0F\u6587\u4EF6");
+    label.setBounds(63, 10, 132, 33);
+    panel.add(label);
+    label.setFont(new Font("华文隶书", Font.PLAIN, 18));
 
-    JScrollPane scrollPane_Select = new JScrollPane();
-    scrollPane_Select.setBounds(286, 10, 286, 381);
-    contentPane.add(scrollPane_Select);
+    textField_ProductionsFormat = new JTextField();
+    textField_ProductionsFormat.setBounds(10, 36, 237, 21);
+    panel.add(textField_ProductionsFormat);
+    textField_ProductionsFormat.setText("src/data/input/productions1.format");
+    textField_ProductionsFormat.setColumns(10);
 
-    table_Select = new JTable();
-    scrollPane_Select.setViewportView(table_Select);
+    textField_TokenPath = new JTextField();
+    textField_TokenPath.setBounds(270, 36, 253, 21);
+    panel.add(textField_TokenPath);
+    textField_TokenPath.setText("src/data/input/tokens.token");
+    textField_TokenPath.setColumns(10);
 
-    JScrollPane scrollPane_Predict = new JScrollPane();
-    scrollPane_Predict.setBounds(582, 10, 286, 381);
-    contentPane.add(scrollPane_Predict);
+    JLabel lblToken = new JLabel("token\u6587\u4EF6");
+    lblToken.setBounds(293, 10, 132, 33);
+    panel.add(lblToken);
+    lblToken.setFont(new Font("华文隶书", Font.PLAIN, 18));
 
-    table_Predict = new JTable();
-    table_Predict.setFillsViewportHeight(true);
-    scrollPane_Predict.setViewportView(table_Predict);
+    textField_ProductionShow = new JTextField();
+    textField_ProductionShow.setBounds(562, 36, 253, 21);
+    panel.add(textField_ProductionShow);
+    textField_ProductionShow.setColumns(10);
+
+    label_1 = new JLabel("\u8BE6\u7EC6\u4EA7\u751F\u5F0F");
+    label_1.setBounds(585, 10, 132, 33);
+    panel.add(label_1);
+    label_1.setFont(new Font("华文隶书", Font.PLAIN, 18));
+
+    JButton button_Execute = new JButton("\u6267\u884C");
+    button_Execute.setBounds(968, 26, 121, 39);
+    panel.add(button_Execute);
+    button_Execute.setFont(new Font("楷体", Font.PLAIN, 18));
+
+    JButton button_ChangeSize = new JButton("\u6539\u53D8\u5E03\u5C40");
+
+    button_ChangeSize.setFont(new Font("楷体", Font.PLAIN, 18));
+    button_ChangeSize.setBounds(837, 16, 121, 39);
+    panel.add(button_ChangeSize);
 
     scrollPane_GrammaTree = new JScrollPane();
-    scrollPane_GrammaTree.setBounds(878, 10, 286, 381);
+    scrollPane_GrammaTree.setBounds(908, 25, 286, 381);
     contentPane.add(scrollPane_GrammaTree);
 
     JTextArea textArea_Tree = new JTextArea();
     scrollPane_GrammaTree.setViewportView(textArea_Tree);
 
-    JButton button_Execute = new JButton("\u6267\u884C");
-    button_Execute.setFont(new Font("楷体", Font.PLAIN, 18));
+    JScrollPane scrollPane_Predict = new JScrollPane();
+    scrollPane_Predict.setBounds(612, 25, 286, 381);
+    contentPane.add(scrollPane_Predict);
+
+    table_Predict = new JTable();
+    scrollPane_Predict.setViewportView(table_Predict);
+    table_Predict.setFillsViewportHeight(true);
+
+    JScrollPane scrollPane_Select = new JScrollPane();
+    scrollPane_Select.setBounds(316, 25, 286, 381);
+    contentPane.add(scrollPane_Select);
+
+    table_Select = new JTable();
+    scrollPane_Select.setViewportView(table_Select);
+
+    JScrollPane scrollPane_FirstAndFollow = new JScrollPane();
+    scrollPane_FirstAndFollow.setBounds(40, 25, 266, 381);
+    contentPane.add(scrollPane_FirstAndFollow);
+
+    table_FirstAndFollow = new JTable();
+    scrollPane_FirstAndFollow.setViewportView(table_FirstAndFollow);
+    button_ChangeSize.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int width = contentPane.getWidth();
+        int height = contentPane.getHeight();
+
+        scrollPane_FirstAndFollow.setBounds(40, 25, (int) (286.0 / 1355.0 * width),
+            (int) (381.0 / 694.0 * height));
+
+        scrollPane_Select.setBounds(
+            scrollPane_FirstAndFollow.getX() + scrollPane_FirstAndFollow.getWidth() + 10, 25,
+            (int) (286.0 / 1355.0 * width), (int) (381.0 / 694.0 * height));
+
+        scrollPane_Predict.setBounds(scrollPane_Select.getX() + scrollPane_Select.getWidth() + 10,
+            25, (int) (286.0 / 1355.0 * width), (int) (381.0 / 694.0 * height));
+
+        scrollPane_GrammaTree.setBounds(
+            scrollPane_Predict.getX() + scrollPane_Predict.getWidth() + 10, 25,
+            (int) (286.0 / 1355.0 * width), (int) (381.0 / 694.0 * height));
+
+        panel.setBounds(40, 25 + scrollPane_FirstAndFollow.getHeight() + 10, 1113, 78);
+
+      }
+    });
+
+
     button_Execute.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 
@@ -220,40 +291,6 @@ public class SynaticShow extends JFrame {
 
       }
     });
-    button_Execute.setBounds(963, 430, 121, 39);
-    contentPane.add(button_Execute);
-
-    textField_ProductionsFormat = new JTextField();
-    textField_ProductionsFormat.setText("src/data/input/productions1.format");
-    textField_ProductionsFormat.setBounds(10, 440, 237, 21);
-    contentPane.add(textField_ProductionsFormat);
-    textField_ProductionsFormat.setColumns(10);
-
-    textField_TokenPath = new JTextField();
-    textField_TokenPath.setText("src/data/input/tokens.token");
-    textField_TokenPath.setColumns(10);
-    textField_TokenPath.setBounds(286, 440, 253, 21);
-    contentPane.add(textField_TokenPath);
-
-    JLabel label = new JLabel("\u4EA7\u751F\u5F0F\u6587\u4EF6");
-    label.setFont(new Font("华文隶书", Font.PLAIN, 18));
-    label.setBounds(75, 401, 132, 33);
-    contentPane.add(label);
-
-    JLabel lblToken = new JLabel("token\u6587\u4EF6");
-    lblToken.setFont(new Font("华文隶书", Font.PLAIN, 18));
-    lblToken.setBounds(326, 401, 132, 33);
-    contentPane.add(lblToken);
-
-    textField_ProductionShow = new JTextField();
-    textField_ProductionShow.setColumns(10);
-    textField_ProductionShow.setBounds(582, 440, 253, 21);
-    contentPane.add(textField_ProductionShow);
-
-    label_1 = new JLabel("\u8BE6\u7EC6\u4EA7\u751F\u5F0F");
-    label_1.setFont(new Font("华文隶书", Font.PLAIN, 18));
-    label_1.setBounds(582, 401, 132, 33);
-    contentPane.add(label_1);
   }
 
 
@@ -304,15 +341,12 @@ public class SynaticShow extends JFrame {
           String valueSelected = (String) t.getValueAt(t.getSelectedRow(), t.getSelectedColumn());
           show.setText(valueSelected);
         }
-
       }
     });
     table.getColumnModel().setColumnMargin(1);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
   }
-
-
 }
 
 
