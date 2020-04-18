@@ -24,7 +24,7 @@ proc int main(){
 		array[2] = array[1];
 		array[1] = temp;
 	}
-		while(number == 10) do {
+		while(number < 100) do {
 		number = number+1;
 	};
 };

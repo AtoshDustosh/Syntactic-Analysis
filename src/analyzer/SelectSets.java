@@ -13,11 +13,13 @@ public class SelectSets {
 
   }
 
-  public void addSelectSet(Production production, Set<GrammarSymbol> terminalList) {
-    if (terminalList.size() == 0) {
-      return;
+  public void addSelectSet(Production production,
+      Set<GrammarSymbol> terminalSet) {
+    if (this.selectSetMap.containsKey(production)) {
+      this.selectSetMap.get(production).addAll(terminalSet);
+    } else {
+      this.selectSetMap.put(production, terminalSet);
     }
-    this.selectSetMap.put(production, new HashSet<>(terminalList));
   }
 
   public Set<GrammarSymbol> getSelectSet(Production production) {
@@ -41,17 +43,17 @@ public class SelectSets {
     String str = "";
     for (Production p : this.selectSetMap.keySet()) {
       Set<GrammarSymbol> symbolSet = this.selectSetMap.get(p);
-      str = str + "production:\n\t" + p.toString() + "select set: " + symbolSet.toString() + "\n";
+      str = str + "production:\n\t" + p.toString() + "select set: "
+          + symbolSet.toString() + "\n";
     }
     return str;
   }
 
   /**
-   * 
    * @return Select字典中的所有键
    */
   public Set<Production> getProductionSet() {
-    return selectSetMap.keySet();
+    return this.selectSetMap.keySet();
   }
 
 }

@@ -245,9 +245,6 @@ public class PredictiveParsingTableConstructor {
       } else {
         this.selectSets.addSelectSet(piece, rhsFirstSet);
       }
-      if (LHS.equals(new GrammarSymbol("ELIST"))) {
-
-      }
     }
     this.selectSetBuilt = true;
   }

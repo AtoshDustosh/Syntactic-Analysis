@@ -89,7 +89,8 @@ public class SynaticAnalysisExecutor {
   public ArrayList<String> getTokensFromFile(String filepath) {
     ArrayList<String> tokens = new ArrayList<>();
     try {
-      BufferedReader br = new BufferedReader(new FileReader(new File(filepath)));
+      BufferedReader br = new BufferedReader(
+          new FileReader(new File(filepath)));
       String line;
       while ((line = br.readLine()) != null) {
         tokens.add(line);
@@ -112,7 +113,8 @@ public class SynaticAnalysisExecutor {
 
   public void errorLog(String log) {
     try {
-      BufferedWriter bw = new BufferedWriter(new FileWriter(new File("src/log/synaticError.log")));
+      BufferedWriter bw = new BufferedWriter(
+          new FileWriter(new File("src/log/synaticError.log")));
       if (log != null) {
         bw.write(log);
       }
@@ -129,9 +131,11 @@ public class SynaticAnalysisExecutor {
    * @param tokenpath
    * @return
    */
-  public MutiWayTree getGrammaTree(PredictiveParsingTable ppt, String tokenpath) {
+  public MutiWayTree getGrammaTree(PredictiveParsingTable ppt,
+      String tokenpath) {
 
-    Node rootnode = new Node(null, ppt.getProductions().getProduction(0).getLHS()); // 根节点
+    Node rootnode = new Node(null,
+        ppt.getProductions().getProduction(0).getLHS()); // 根节点
     MutiWayTree mwt = new MutiWayTree(rootnode); // 根据根节点创建树
     Stack<Node> stateStack = new Stack<>();
     stateStack.push(rootnode);
@@ -143,11 +147,10 @@ public class SynaticAnalysisExecutor {
     for (int k = 0; k < tokens.size(); k++) {
       count++;
       String tokenNumString = "";
-      String[] tokenStringArray = getTokenItems(tokens.get(k));
+      String[] tokenStringArray = this.getTokenItems(tokens.get(k));
       tokenNumString = tokenStringArray[1];
       String row = tokenStringArray[3];
       String column = tokenStringArray[4];
-
 
       int tokennum = Integer.parseInt(tokenNumString);
       GrammarSymbol tokenGS = this.tokenToTerminal.get(tokennum);// 当前Token的语法符号
@@ -196,7 +199,8 @@ public class SynaticAnalysisExecutor {
         System.out.println("count =" + count);
         List<GrammarSymbol> rightGrammars = new ArrayList<>();
         if (pbreak.getRHSlist().size() == 0) {
-          rightGrammars = new ArrayList<>(Arrays.asList(new GrammarSymbol("empty")));
+          rightGrammars = new ArrayList<>(
+              Arrays.asList(new GrammarSymbol("empty")));
         } else {
           rightGrammars = pbreak.getRHSlist().get(0);// 是这样么？
         }
@@ -224,7 +228,8 @@ public class SynaticAnalysisExecutor {
 
   public MutiWayTree SynaticAnalysis(String productionPath, String tokenPath) {
     Productions pros = new Productions(productionPath);
-    PredictiveParsingTableConstructor prtc = new PredictiveParsingTableConstructor(pros);
+    PredictiveParsingTableConstructor prtc = new PredictiveParsingTableConstructor(
+        pros);
     System.out.println(prtc.getPPTable().toString());
     SynaticAnalysisExecutor sAE = new SynaticAnalysisExecutor();
     MutiWayTree mwt = sAE.getGrammaTree(prtc.getPPTable(), tokenPath);
@@ -247,30 +252,35 @@ public class SynaticAnalysisExecutor {
         break;
       }
 
-      if (line.charAt(i) == '<')
+      if (line.charAt(i) == '<') {
         if (line.charAt(i + 1) != '>') {
           lineList.set(i, ' ');
         }
+      }
 
-      if (line.charAt(i) == '>')
+      if (line.charAt(i) == '>') {
         if (line.charAt(i + 1) != '>') {
           lineList.set(i, ' ');
         }
+      }
 
-      if (line.charAt(i) == ',')
+      if (line.charAt(i) == ',') {
         if (line.charAt(i + 1) != '>') {
           lineList.set(i, ' ');
         }
+      }
 
-      if (line.charAt(i) == '(')
+      if (line.charAt(i) == '(') {
         if (line.charAt(i + 1) != '>') {
           lineList.set(i, ' ');
         }
+      }
 
-      if (line.charAt(i) == ')')
+      if (line.charAt(i) == ')') {
         if (line.charAt(i + 1) != '>') {
           lineList.set(i, ' ');
         }
+      }
 
     }
 
@@ -291,7 +301,8 @@ public class SynaticAnalysisExecutor {
     // "src/data/input/productions.format"
     // "src/data/input/tokens.token"
     System.out.println(new SynaticAnalysisExecutor()
-        .SynaticAnalysis("src/data/input/productions.format", "src/test/synTest1.token"));
+        .SynaticAnalysis("src/data/input/productions.format",
+            "src/test/synTest1.token"));
 
   }
 
