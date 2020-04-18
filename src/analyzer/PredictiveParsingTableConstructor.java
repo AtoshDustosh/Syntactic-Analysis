@@ -245,6 +245,9 @@ public class PredictiveParsingTableConstructor {
       } else {
         this.selectSets.addSelectSet(piece, rhsFirstSet);
       }
+      if (LHS.equals(new GrammarSymbol("ELIST"))) {
+
+      }
     }
     this.selectSetBuilt = true;
   }
@@ -306,6 +309,8 @@ public class PredictiveParsingTableConstructor {
     }
     if (emptyCount < list.size()) {
       firstSet.remove(new GrammarSymbol("empty"));
+    } else if (emptyCount == list.size()) {
+      firstSet.add(new GrammarSymbol("empty"));
     }
     return firstSet;
   }
