@@ -48,3 +48,10 @@ return 47
 && 48
 || 49
 then 50
+proc 51
+and 52
+not 53
+or 54
+case 55
+default 56
+char 57

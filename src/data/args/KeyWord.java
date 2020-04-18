@@ -23,9 +23,16 @@ public class KeyWord {
       this.add("else");
       this.add("do");
       this.add("while");
-      this.add("function");
       this.add("call");
       this.add("return");
+      this.add("proc");
+      this.add("and");
+      this.add("not");
+      this.add("or");
+      this.add("case");
+      this.add("default");
+      this.add("char");
+      this.add("record");
     }
   };
 

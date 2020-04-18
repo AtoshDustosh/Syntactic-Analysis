@@ -10,7 +10,8 @@ public enum InputFilePaths {
   LEXICAL_TEST_ERROR("src/test/testError.code"),
   WORDSERIALNUMBER("src/data/input/WSnumbers.wsn"),
   PRODUCTIONS0("src/data/input/productions.format"),
-  PRODUCTIONS("src/data/input/productions1.format"),
+  PRODUCTIONS1("src/data/input/productions1.format"),
+  PRODUCTIONS2("src/data/input/productions2.format"),
   SYNTACTIC_TEST_1("src/test/synTest1.code"),
   ;
 

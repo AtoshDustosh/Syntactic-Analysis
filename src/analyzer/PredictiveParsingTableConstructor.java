@@ -337,6 +337,7 @@ public class PredictiveParsingTableConstructor {
           }
           otherRHSfirstSets.retainAll(lhsFollowSet);
           if (otherRHSfirstSets.size() > 0) {
+            System.out.println("production: \n" + p.toString());
             System.out.println("RHS first set: \n" + rhsFirstSet.toString());
             System.out.println(
                 "other RHS first set: \n" + otherRHSfirstSets.toString());
@@ -359,6 +360,7 @@ public class PredictiveParsingTableConstructor {
           intersection.retainAll(rhsFirstSet);
         }
         if (intersection.isEmpty() == false) {
+          System.out.println("production: \n" + p.toString());
           System.out.println("LHS follow set: \n" + lhsFollowSet.toString());
           System.out.println("remained gS: \n" + intersection.toString());
           return false;

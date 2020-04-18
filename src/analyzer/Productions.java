@@ -17,7 +17,7 @@ import data.input.InputFilePaths;
  * @author AtoshDustosh
  */
 public class Productions {
-  private String productionsFilePath = InputFilePaths.PRODUCTIONS.getFilePath();
+  private String productionsFilePath = InputFilePaths.PRODUCTIONS1.getFilePath();
 
   private List<Production> productionList = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class Productions {
 
   public static void main(String[] args) {
     Productions productions = new Productions(
-        InputFilePaths.PRODUCTIONS.getFilePath());
+        InputFilePaths.PRODUCTIONS1.getFilePath());
     System.out.println("productions\n" + productions.toString());
 
     System.out.println("break productions into pieces");
