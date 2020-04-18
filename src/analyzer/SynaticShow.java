@@ -77,6 +77,7 @@ public class SynaticShow extends JFrame {
     contentPane.add(scrollPane_Predict);
 
     table_Predict = new JTable();
+    table_Predict.setFillsViewportHeight(true);
     scrollPane_Predict.setViewportView(table_Predict);
 
     scrollPane_GrammaTree = new JScrollPane();
@@ -212,7 +213,7 @@ public class SynaticShow extends JFrame {
         // table结束
         // tree开始
         String mwtString = mwt.toString();
-        textArea_Tree.append(mwtString);
+        textArea_Tree.setText(mwtString);
         // tree结束
 
 
@@ -306,6 +307,9 @@ public class SynaticShow extends JFrame {
 
       }
     });
+    table.getColumnModel().setColumnMargin(1);
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
   }
 
 
