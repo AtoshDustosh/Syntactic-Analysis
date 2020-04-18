@@ -270,7 +270,6 @@ public class PredictiveParsingTableConstructor {
       Set<GrammarSymbol> followSet = this.followSets.getFollowSet(nonterminal);
       for (GrammarSymbol terminal : followSet) {
         this.ppTable.setSynchTableEntry(nonterminal, terminal, true);
-
       }
     }
     this.ppTableBuilt = true;
@@ -313,13 +312,14 @@ public class PredictiveParsingTableConstructor {
 
   private boolean isLL1Grammar() {
     // check every production
+    System.out.println("checking LL(1) grammar...");
     for (int i = 0; i < this.productions.size(); i++) {
       Production p = this.productions.getProduction(i);
       GrammarSymbol LHS = p.getLHS();
       Set<GrammarSymbol> lhsFollowSet = this.followSets.getFollowSet(LHS);
       List<List<GrammarSymbol>> rhsList = p.getRHSlist();
       boolean canInferEmpty = false;
-      System.out.println("production: \n" + p.toString());
+//      System.out.println("production: \n" + p.toString());
       // check the RHS list of a LHS
       for (int j = 0; j < rhsList.size(); j++) {
         List<GrammarSymbol> RHS = rhsList.get(j);
@@ -355,7 +355,7 @@ public class PredictiveParsingTableConstructor {
         for (int j = 0; j < rhsList.size(); j++) {
           List<GrammarSymbol> RHS = rhsList.get(j);
           Set<GrammarSymbol> rhsFirstSet = this.firstSetofSymbolList(RHS);
-          System.out.println("RHS: " + RHS + " - first set: " + rhsFirstSet);
+//          System.out.println("RHS: " + RHS + " - first set: " + rhsFirstSet);
           intersection.retainAll(rhsFirstSet);
         }
         if (intersection.isEmpty() == false) {
@@ -365,6 +365,7 @@ public class PredictiveParsingTableConstructor {
         }
       }
     } // end of checking this production
+    System.out.println("... checked - is LL(1) grammar");
     return true;
   }
 }

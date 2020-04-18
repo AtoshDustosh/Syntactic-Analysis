@@ -60,7 +60,8 @@ public class PredictiveParsingTable {
     return this.productions.copy();
   }
 
-  public boolean setProductionTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal,
+  public boolean setProductionTableEntry(GrammarSymbol nonterminal,
+      GrammarSymbol terminal,
       Production newEntry) {
     if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
         && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
@@ -78,7 +79,8 @@ public class PredictiveParsingTable {
     }
   }
 
-  public Production getProductionTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal) {
+  public Production getProductionTableEntry(GrammarSymbol nonterminal,
+      GrammarSymbol terminal) {
     if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
         && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
       int rowIndex = this.rowIndexMap.get(nonterminal);
@@ -89,7 +91,8 @@ public class PredictiveParsingTable {
     }
   }
 
-  public boolean setSynchTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal,
+  public boolean setSynchTableEntry(GrammarSymbol nonterminal,
+      GrammarSymbol terminal,
       boolean newEntry) {
     if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
         && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
@@ -107,7 +110,8 @@ public class PredictiveParsingTable {
     }
   }
 
-  public boolean getSynchTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal) {
+  public boolean getSynchTableEntry(GrammarSymbol nonterminal,
+      GrammarSymbol terminal) {
     if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
         && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
       int rowIndex = this.rowIndexMap.get(nonterminal);
@@ -127,12 +131,14 @@ public class PredictiveParsingTable {
   }
 
   public PredictiveParsingTable copy() {
-    PredictiveParsingTable ppTable = new PredictiveParsingTable(this.productions);
+    PredictiveParsingTable ppTable = new PredictiveParsingTable(
+        this.productions);
     for (GrammarSymbol rowSymbol : this.rowIndexMap.keySet()) {
       for (GrammarSymbol columnSymbol : this.columnIndexMap.keySet()) {
         ppTable.setProductionTableEntry(rowSymbol, columnSymbol,
             this.getProductionTableEntry(rowSymbol, columnSymbol));
-        ppTable.setSynchTableEntry(rowSymbol, columnSymbol, false);
+        ppTable.setSynchTableEntry(rowSymbol, columnSymbol,
+            this.getSynchTableEntry(rowSymbol, columnSymbol));
       }
     }
     return ppTable;
@@ -149,7 +155,8 @@ public class PredictiveParsingTable {
       productionSerialNumMap.put(piecesProductions.getProduction(i), (i + 1));
     }
     List<GrammarSymbol> rowList = new ArrayList<>(this.rowIndexMap.keySet());
-    List<GrammarSymbol> columnList = new ArrayList<>(this.columnIndexMap.keySet());
+    List<GrammarSymbol> columnList = new ArrayList<>(
+        this.columnIndexMap.keySet());
     str = str + "\t";
     for (int i = 0; i < columnList.size(); i++) {
       str = str + columnList.get(i).getName() + "\t";
@@ -158,7 +165,8 @@ public class PredictiveParsingTable {
     for (int i = 0; i < rowList.size(); i++) {
       str = str + rowList.get(i).getName() + "\t";
       for (int j = 0; j < columnList.size(); j++) {
-        Production p = this.getProductionTableEntry(rowList.get(i), columnList.get(j));
+        Production p = this.getProductionTableEntry(rowList.get(i),
+            columnList.get(j));
         if (p.equals(new Production())) {
           str = str + null + "\t";
         } else {
@@ -167,6 +175,19 @@ public class PredictiveParsingTable {
           } else {
             str = str + productionSerialNumMap.get(p) + "\t";
           }
+        }
+      }
+      str = str + "\n";
+    }
+    for (int i = 0; i < rowList.size(); i++) {
+      str = str + rowList.get(i).getName() + "\t";
+      for (int j = 0; j < columnList.size(); j++) {
+        boolean entryValue = this.getSynchTableEntry(rowList.get(i),
+            columnList.get(j));
+        if (entryValue == false) {
+          str = str + null + "\t";
+        } else {
+          str = str + "synch\t";
         }
       }
       str = str + "\n";
@@ -189,7 +210,5 @@ public class PredictiveParsingTable {
     }
     return maxLengthName;
   }
-
-
 
 }
