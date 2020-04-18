@@ -72,12 +72,10 @@ public class MutiWayTree {
       String layerString = "";
       int layer = getLayer(currentNode);
       for (int i = 0; i < layer; i++) {
-        layerString += "\t";
+        layerString += "---->";
       }
 
-      System.out.println(layerString + currentNode.getGrammaSymbol().toString());
-
-
+      treeString += layerString + currentNode.getGrammaSymbol().getName() + "\n";
       for (int i = 0; i < currentNode.getChildrenList().size(); i++) {
         treeStack.push(currentNode.getChildrenList().get(i));
       }

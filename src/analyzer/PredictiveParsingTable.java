@@ -60,11 +60,10 @@ public class PredictiveParsingTable {
     return this.productions.copy();
   }
 
-  public boolean setProductionTableEntry(GrammarSymbol nonterminal,
-      GrammarSymbol terminal,
+  public boolean setProductionTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal,
       Production newEntry) {
-    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL) &&
-        terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
+    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
+        && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
       int rowIndex = this.rowIndexMap.get(nonterminal);
       int columnIndex = this.columnIndexMap.get(terminal);
       Production oldEntry = this.analysisTable.get(rowIndex).get(columnIndex);
@@ -79,10 +78,9 @@ public class PredictiveParsingTable {
     }
   }
 
-  public Production getProductionTableEntry(GrammarSymbol nonterminal,
-      GrammarSymbol terminal) {
-    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL) &&
-        terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
+  public Production getProductionTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal) {
+    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
+        && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
       int rowIndex = this.rowIndexMap.get(nonterminal);
       int columnIndex = this.columnIndexMap.get(terminal);
       return this.analysisTable.get(rowIndex).get(columnIndex);
@@ -91,10 +89,10 @@ public class PredictiveParsingTable {
     }
   }
 
-  public boolean setSynchTableEntry(GrammarSymbol nonterminal,
-      GrammarSymbol terminal, boolean newEntry) {
-    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL) &&
-        terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
+  public boolean setSynchTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal,
+      boolean newEntry) {
+    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
+        && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
       int rowIndex = this.rowIndexMap.get(nonterminal);
       int columnIndex = this.columnIndexMap.get(terminal);
       boolean oldEntry = this.synchTable.get(rowIndex).get(columnIndex);
@@ -109,10 +107,9 @@ public class PredictiveParsingTable {
     }
   }
 
-  public boolean getSynchTableEntry(GrammarSymbol nonterminal,
-      GrammarSymbol terminal) {
-    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL) &&
-        terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
+  public boolean getSynchTableEntry(GrammarSymbol nonterminal, GrammarSymbol terminal) {
+    if (nonterminal.getType().equals(GrammarSymbolType.NONTERMINAL)
+        && terminal.getType().equals(GrammarSymbolType.TERMINAL)) {
       int rowIndex = this.rowIndexMap.get(nonterminal);
       int columnIndex = this.columnIndexMap.get(terminal);
       return this.synchTable.get(rowIndex).get(columnIndex);
@@ -130,8 +127,7 @@ public class PredictiveParsingTable {
   }
 
   public PredictiveParsingTable copy() {
-    PredictiveParsingTable ppTable = new PredictiveParsingTable(
-        this.productions);
+    PredictiveParsingTable ppTable = new PredictiveParsingTable(this.productions);
     for (GrammarSymbol rowSymbol : this.rowIndexMap.keySet()) {
       for (GrammarSymbol columnSymbol : this.columnIndexMap.keySet()) {
         ppTable.setProductionTableEntry(rowSymbol, columnSymbol,
@@ -149,13 +145,11 @@ public class PredictiveParsingTable {
     Map<Production, Integer> productionSerialNumMap = new HashMap<>();
     str = str + "Serial numbers of productions\n";
     for (int i = 0; i < piecesProductions.size(); i++) {
-      str = str + "(" + (i + 1) + ")\n "
-          + piecesProductions.getProduction(i);
+      str = str + "(" + (i + 1) + ")\n " + piecesProductions.getProduction(i);
       productionSerialNumMap.put(piecesProductions.getProduction(i), (i + 1));
     }
     List<GrammarSymbol> rowList = new ArrayList<>(this.rowIndexMap.keySet());
-    List<GrammarSymbol> columnList = new ArrayList<>(
-        this.columnIndexMap.keySet());
+    List<GrammarSymbol> columnList = new ArrayList<>(this.columnIndexMap.keySet());
     str = str + "\t";
     for (int i = 0; i < columnList.size(); i++) {
       str = str + columnList.get(i).getName() + "\t";
@@ -164,8 +158,7 @@ public class PredictiveParsingTable {
     for (int i = 0; i < rowList.size(); i++) {
       str = str + rowList.get(i).getName() + "\t";
       for (int j = 0; j < columnList.size(); j++) {
-        Production p = this.getProductionTableEntry(rowList.get(i),
-            columnList.get(j));
+        Production p = this.getProductionTableEntry(rowList.get(i), columnList.get(j));
         if (p.equals(new Production())) {
           str = str + null + "\t";
         } else {
@@ -181,4 +174,22 @@ public class PredictiveParsingTable {
 
     return str;
   }
+
+  /**
+   * Get the grammar symbol whose name is the longest.
+   * 
+   * @return longest grammar symbol
+   */
+  private String maxLengthGrammarSymbolName() {
+    String maxLengthName = "";
+    for (GrammarSymbol symbol : this.productions.getNonterminalSet()) {
+      if (symbol.getName().length() > maxLengthName.length()) {
+        maxLengthName = symbol.getName();
+      }
+    }
+    return maxLengthName;
+  }
+
+
+
 }

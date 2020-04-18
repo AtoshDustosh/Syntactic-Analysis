@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -77,16 +76,14 @@ public class LexicalPrint extends JFrame {
     label_SourceCode.setBounds(201, 16, 108, 29);
     this.contentPane.add(label_SourceCode);
 
-    JButton btnopen = new JButton(
-        "\u6253\u5F00\u6587\u4EF6\u5E76\u751F\u6210Token\u8868");
+    JButton btnopen = new JButton("\u6253\u5F00\u6587\u4EF6\u5E76\u751F\u6210Token\u8868");
     btnopen.setFont(new Font("楷体", Font.PLAIN, 17));
     btnopen.setBounds(119, 510, 213, 38);
     btnopen.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        LexicalPrint.this.OpenFileAndAnalysis(textArea_SourceCode,
-            textArea_Message);
+        LexicalPrint.this.OpenFileAndAnalysis(textArea_SourceCode, textArea_Message);
       }
     });
     this.contentPane.add(btnopen);
@@ -107,8 +104,7 @@ public class LexicalPrint extends JFrame {
   /**
    * Open the code file and analyze it.尚需填充
    */
-  private void OpenFileAndAnalysis(JTextArea textArea_SourceCode,
-      JTextArea textArea_Tokens) {
+  private void OpenFileAndAnalysis(JTextArea textArea_SourceCode, JTextArea textArea_Tokens) {
     try {
       JFrame f = new JFrame("my window");// 创建窗体对象
       f.setBounds(300, 100, 650, 600);// 设置窗体位置和大小
@@ -145,13 +141,14 @@ public class LexicalPrint extends JFrame {
       LexicalAnalyzer la = new LexicalAnalyzer();
       Tokens tokenPrint = la.analyzeFile(dirpath + fileName);// The new Token object modifies the //
                                                              // initialization statement // if the
-                                                             // program requires it, but does not change the // quantity name
+                                                             // program requires it, but does not
+                                                             // change the // quantity name
 
       for (Token tk : tokenPrint.getTokenListCopy()) {
-        String tkline = "<" + tk.getWordSerialNumber() + "，" + tk.getWordValue()
-            + ">" + "\n";
+        String tkline = tk.toString() + "\n";
         textArea_Tokens.append(tkline);
       }
+      textArea_Tokens.append("<51,$>\n");
       br.close();
 
     } catch (Exception e) {
