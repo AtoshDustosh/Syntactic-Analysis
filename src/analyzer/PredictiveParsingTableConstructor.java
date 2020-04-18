@@ -30,7 +30,7 @@ public class PredictiveParsingTableConstructor {
 
   public static void main(String[] args) {
     Productions productions = new Productions(
-        InputFilePaths.PRODUCTIONS.getFilePath());
+        InputFilePaths.PRODUCTIONS0.getFilePath());
     PredictiveParsingTableConstructor pptConstructor = new PredictiveParsingTableConstructor(
         productions);
 
