@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Set;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -73,8 +72,7 @@ public class SynaticShow extends JFrame {
     this.textField_ProductionsFormat = new JTextField();
     this.textField_ProductionsFormat.setBounds(10, 36, 237, 21);
     this.panel.add(this.textField_ProductionsFormat);
-    this.textField_ProductionsFormat
-        .setText("src/data/input/productions.format");
+    this.textField_ProductionsFormat.setText("src/data/input/productions.format");
     this.textField_ProductionsFormat.setColumns(10);
 
     this.textField_TokenPath = new JTextField();
@@ -146,26 +144,22 @@ public class SynaticShow extends JFrame {
         int width = SynaticShow.this.contentPane.getWidth();
         int height = SynaticShow.this.contentPane.getHeight();
 
-        scrollPane_FirstAndFollow.setBounds(40, 25,
-            (int) (286.0 / 1355.0 * width),
+        scrollPane_FirstAndFollow.setBounds(40, 25, (int) (286.0 / 1355.0 * width),
             (int) (381.0 / 694.0 * height));
 
         scrollPane_Select.setBounds(
-            scrollPane_FirstAndFollow.getX()
-                + scrollPane_FirstAndFollow.getWidth() + 10,
-            25,
+            scrollPane_FirstAndFollow.getX() + scrollPane_FirstAndFollow.getWidth() + 10, 25,
             (int) (286.0 / 1355.0 * width), (int) (381.0 / 694.0 * height));
 
-        scrollPane_Predict.setBounds(
-            scrollPane_Select.getX() + scrollPane_Select.getWidth() + 10,
+        scrollPane_Predict.setBounds(scrollPane_Select.getX() + scrollPane_Select.getWidth() + 10,
             25, (int) (286.0 / 1355.0 * width), (int) (381.0 / 694.0 * height));
 
         SynaticShow.this.scrollPane_GrammaTree.setBounds(
             scrollPane_Predict.getX() + scrollPane_Predict.getWidth() + 10, 25,
             (int) (286.0 / 1355.0 * width), (int) (381.0 / 694.0 * height));
 
-        SynaticShow.this.panel.setBounds(40,
-            25 + scrollPane_FirstAndFollow.getHeight() + 10, 1113, 78);
+        SynaticShow.this.panel.setBounds(40, 25 + scrollPane_FirstAndFollow.getHeight() + 10, 1113,
+            78);
 
       }
     });
@@ -174,14 +168,12 @@ public class SynaticShow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
 
-        Productions pros = new Productions(
-            SynaticShow.this.textField_ProductionsFormat.getText());
-        PredictiveParsingTableConstructor prtc = new PredictiveParsingTableConstructor(
-            pros);
+        Productions pros = new Productions(SynaticShow.this.textField_ProductionsFormat.getText());
+        PredictiveParsingTableConstructor prtc = new PredictiveParsingTableConstructor(pros);
         System.out.println(prtc.getPPTable().toString());
         SynaticAnalysisExecutor sAE = new SynaticAnalysisExecutor();
-        MutiWayTree mwt = sAE.getGrammaTree(prtc.getPPTable(),
-            SynaticShow.this.textField_TokenPath.getText());
+        MutiWayTree mwt =
+            sAE.getGrammaTree(prtc.getPPTable(), SynaticShow.this.textField_TokenPath.getText());
 
         // 变量准备-开始
         FirstSets first = prtc.getFirstSets();
@@ -192,8 +184,7 @@ public class SynaticShow extends JFrame {
         Set<GrammarSymbol> firstGrammaSet = first.getGrammaSet();
         Set<GrammarSymbol> followGrammaSet = follow.getGrammaSet();
 
-        Productions selectProductions = prtc.getPPTable().getProductions()
-            .breakIntoPieces();
+        Productions selectProductions = prtc.getPPTable().getProductions().breakIntoPieces();
 
         // 变量准备-结束
 
@@ -215,18 +206,16 @@ public class SynaticShow extends JFrame {
           for (GrammarSymbol followgs : followSet) {
             followString += followgs.getName() + ",";
           }
-          String[] singleline = { gramma, firstString, followString };
+          String[] singleline = {gramma, firstString, followString};
           grammafirstfollowTable.add(singleline);
 
         }
-        String[][] grammafirstfollowTableInput = new String[grammafirstfollowTable
-            .size()][];
+        String[][] grammafirstfollowTableInput = new String[grammafirstfollowTable.size()][];
         grammafirstfollowTable.toArray(grammafirstfollowTableInput);
-        String[] firstfollowcolumn = { "非终结符", "First集合", "Follow集合" };
-        SynaticShow.this.initialFirstAndFollow(
-            SynaticShow.this.table_FirstAndFollow, scrollPane_FirstAndFollow,
-            firstfollowcolumn,
-            grammafirstfollowTableInput);
+        String[] firstfollowcolumn = {"非终结符", "First集合", "Follow集合"};
+        SynaticShow.this.initialFirstAndFollow(SynaticShow.this.table_FirstAndFollow,
+            scrollPane_FirstAndFollow, firstfollowcolumn, grammafirstfollowTableInput,
+            textField_ProductionShow);
         // firstfollow结束
 
         // select开始
@@ -236,8 +225,7 @@ public class SynaticShow extends JFrame {
           String selectlineString = "";
           String selectProductionString = production.getLHS().getName() + "-->";
           for (int j = 0; j < production.getRHSlist().get(0).size(); j++) {
-            selectProductionString += production.getRHSlist().get(0).get(j)
-                .getName() + " ";
+            selectProductionString += production.getRHSlist().get(0).get(j).getName() + " ";
           }
           selectProductionString += "";
 
@@ -245,18 +233,17 @@ public class SynaticShow extends JFrame {
           for (GrammarSymbol selectgs : selectSet) {
             selectlineString += selectgs.getName() + ",";
           }
-          String[] singleline = { selectProductionString, selectlineString };
+          String[] singleline = {selectProductionString, selectlineString};
           grammaSelectTable.add(singleline);
         }
 
-        String[] selectcolumn = { "产生式", "Select集合" };
-        String[][] grammaSelectTableInput = new String[grammaSelectTable
-            .size()][];
+        String[] selectcolumn = {"产生式", "Select集合"};
+        String[][] grammaSelectTableInput = new String[grammaSelectTable.size()][];
         for (int i = 0; i < grammaSelectTable.size(); i++) {
           grammaSelectTableInput[i] = grammaSelectTable.get(i);
         }
-        SynaticShow.this.initialSelect(SynaticShow.this.table_Select,
-            scrollPane_Select, selectcolumn, grammaSelectTableInput);
+        SynaticShow.this.initialSelect(SynaticShow.this.table_Select, scrollPane_Select,
+            selectcolumn, grammaSelectTableInput, textField_ProductionShow);
 
         // select结束
         // table开始
@@ -274,15 +261,12 @@ public class SynaticShow extends JFrame {
             String singleTableValue = "";
 
             // 填充单个表项
-            if (!prtc.getPPTable()
-                .getProductionTableEntry(nonterminal, terminal)
+            if (!prtc.getPPTable().getProductionTableEntry(nonterminal, terminal)
                 .equals(new Production())) {
-              singleTableValue = prtc.getPPTable()
-                  .getProductionTableEntry(nonterminal, terminal)
+              singleTableValue = prtc.getPPTable().getProductionTableEntry(nonterminal, terminal)
                   .getLHS().getName() + "->";
               for (GrammarSymbol gs : prtc.getPPTable()
-                  .getProductionTableEntry(nonterminal, terminal).getRHSlist()
-                  .get(0)) {
+                  .getProductionTableEntry(nonterminal, terminal).getRHSlist().get(0)) {
                 singleTableValue += " " + gs.getName();
               }
             } else {
@@ -305,9 +289,8 @@ public class SynaticShow extends JFrame {
         rowLineArrayList.toArray(rowLineArrayArray);
         String[] headArray = new String[headList.size()];
         headList.toArray(headArray);
-        SynaticShow.this.initialFirstPredict(SynaticShow.this.table_Predict,
-            scrollPane_Predict, headArray, rowLineArrayArray,
-            SynaticShow.this.textField_ProductionShow);
+        SynaticShow.this.initialFirstPredict(SynaticShow.this.table_Predict, scrollPane_Predict,
+            headArray, rowLineArrayArray, SynaticShow.this.textField_ProductionShow);
         // table结束
         // tree开始
         String mwtString = mwt.toString();
@@ -324,35 +307,7 @@ public class SynaticShow extends JFrame {
    * @param table
    * @param scrollPane
    */
-  public void initialFirstAndFollow(JTable table, JScrollPane scrollPane,
-      String[] columns,
-      String[][] tableValues) {
-    table = new JTable(tableValues, columns);
-    scrollPane.setViewportView(table);
-  }
-
-  /**
-   * 根据分析构建器的内容初始化Select表格
-   * 
-   * @param table
-   * @param scrollPane
-   */
-  public void initialSelect(JTable table, JScrollPane scrollPane,
-      String[] columns,
-      String[][] tableValues) {
-
-    table = new JTable(tableValues, columns);
-    scrollPane.setViewportView(table);
-  }
-
-  /**
-   * 根据分析构建器的内容初始化Predict表格
-   * 
-   * @param table
-   * @param scrollPane
-   */
-  public void initialFirstPredict(JTable table, JScrollPane scrollPane,
-      String[] columns,
+  public void initialFirstAndFollow(JTable table, JScrollPane scrollPane, String[] columns,
       String[][] tableValues, JTextField show) {
     table = new JTable(tableValues, columns);
     scrollPane.setViewportView(table);
@@ -362,8 +317,54 @@ public class SynaticShow extends JFrame {
         Object o = e.getSource();
         if (o instanceof JTable) {
           JTable t = (JTable) o;
-          String valueSelected = (String) t.getValueAt(t.getSelectedRow(),
-              t.getSelectedColumn());
+          String valueSelected = (String) t.getValueAt(t.getSelectedRow(), t.getSelectedColumn());
+          show.setText(valueSelected);
+        }
+      }
+    });
+  }
+
+  /**
+   * 根据分析构建器的内容初始化Select表格
+   * 
+   * @param table
+   * @param scrollPane
+   */
+  public void initialSelect(JTable table, JScrollPane scrollPane, String[] columns,
+      String[][] tableValues, JTextField show) {
+
+    table = new JTable(tableValues, columns);
+    scrollPane.setViewportView(table);
+    table.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        Object o = e.getSource();
+        if (o instanceof JTable) {
+          JTable t = (JTable) o;
+          String valueSelected = (String) t.getValueAt(t.getSelectedRow(), t.getSelectedColumn());
+          show.setText(valueSelected);
+        }
+      }
+    });
+  }
+
+  /**
+   * 根据分析构建器的内容初始化Predict表格
+   * 
+   * @param table
+   * @param scrollPane
+   */
+  public void initialFirstPredict(JTable table, JScrollPane scrollPane, String[] columns,
+      String[][] tableValues, JTextField show) {
+    table = new JTable(tableValues, columns);
+    scrollPane.setViewportView(table);
+    table.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        Object o = e.getSource();
+        if (o instanceof JTable) {
+          JTable t = (JTable) o;
+          String valueSelected = (String) t.getValueAt(t.getSelectedRow(), t.getSelectedColumn());
           show.setText(valueSelected);
         }
       }
