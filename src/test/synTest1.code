@@ -2,12 +2,17 @@
 double globalDouble;
 int globalNumber;
 
+record Location{
+	int row;
+	int column;
+};
 
 
 proc int main(){
 	globalDouble = 4.3E2;
 	int number;
 	int[2] array;
+	int[4][5] multiArrray;
 	number = 2;
 	array[1] = 2;
 	array[2] = 3;
