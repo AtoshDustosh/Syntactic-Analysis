@@ -1,0 +1,28 @@
+在对Production和Productions类重构后，Production可以自己存储多个具有相同左部的产生式了。
+
+计算FIRST集的具体思路（初步）
+
+设置标记记录组Map<String, Boolean> finished，用于记录某个非终结符的First集是否已经计算完成。将其初始化。
+1. 选择某个Production作为当前待处理的Production（循环）
+	如果该产生式的First集已经计算完成，选取下一个非终结符
+2. 递归函数（Production, Map<String, boolean>）
+	2.a 依次处理当前Production的每个右部（循环）
+		2.1 设置emtpyCount，用于记录当前这个右部的语法符号可以推导出多少个empty
+		2.2 从左到右依次处理当前右部的所有语法符号（循环i++）
+			2.2.1 如果当前右部的第i个符号与LHS相同
+				break
+			2.2.2 如果当前右部的第i个语法符号是终结符，则将它加入当前非终结符的First集
+				break
+			2.2.3 如果当前右部的第i个语法符号是非终结符，查看其First集是否计算完成
+				2.2.3.1 如果计算完成，检查是否有empty，如果有，emptyCount++
+					如果emptyCount == i，则将这个非终结符对应的First集加入当前非终结符的First集
+				2.2.3.2 如果计算没有完成，找到这个非终结符对应的产生式proNew，递归(proNew, finished)
+				（递归完成后，这个非终结符的First集应该已经计算出来了）i = i - 1
+		2.3 如果emptyCount等于当前产生式的右部的语法符号数量，则在当前产生式的First集中加入empty
+			否则，在当前产生式的First集中去除empty
+	2.b 将当前非终结符的finished标记为已完成
+
+
+note：其实这里可以把Production类删掉，统一Productions类与FirstSets类的域
+	然后让FirstSets直接通过继承Productions来实现
+	不过那样子的话，就需要在Productions中添加一些额外的方法

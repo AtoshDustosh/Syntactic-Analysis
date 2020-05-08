@@ -1,0 +1,17 @@
+已有功能：
+	获取First，Follow，Select集，产生式
+
+具体构建步骤
+	初始化表
+		根据产生式获取非终结符和终结符的数量，以确定表的行标和列标
+		在列标中额外加入"$"
+	获取每个Production对应的的Select集（循环）
+		取出当前Select集的键值项Set<GrammarSymbol>
+		取出Production的左部LHS
+			对当前键值项内的每个终结符terminal（循环）
+				向预测分析表中（LHS，terminal）对应的位置填入当前的Production
+
+关于同步词法单元synch的添加
+	获取某个非终结符的Follow集（循环）
+		对Follow集的每个终结符处理（循环）
+			对照到ppTable上的（当前非终结符，当前终结符）的位置，在synchMap中填入true

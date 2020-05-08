@@ -1,0 +1,17 @@
+(原要求)
+对于文法的产生式任一产生式：
+（1）文法不存在左递归
+（2）假设A->α | β是其中一个产生式,  如果α 或者 β都不能推出 empty，则First（α ）∩ First（ β）=∅
+（3）假设A->α | β是其中一个产生式， 
+	如果 β =>* empty，则First (α) ∩ FOLLOW(A) = null;
+	如果 α =>* empty，则First (β) ∩ FOLLOW(A) = null;
+文法所有的产生式都要满足以上三种情况才符合LL（1）文法
+
+(转换的算法思路)
+所有产生式的所有这些条件都符合才算是LL(1)文法
+	如果遇到了A -> a | b | c | d | ...
+		如果 a =>* empty, 则UNION(First of other RHS) ∩ Follow(A) = null
+		如果 b =>* empty, 则UNION(First of other RHS) ∩ Follow(A) = null
+		其余右部(RHS)同理
+		
+		如果都不能推导出empty, 则要求First(a) ∩ First(b) ∩ ... = null

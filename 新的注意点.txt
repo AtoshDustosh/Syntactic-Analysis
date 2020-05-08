@@ -1,0 +1,4 @@
+1. 关于HashMap用于自定义对象时无法区分重复对象的问题
+	这主要是因为自定义对象没有重写hashCode()函数。
+	hashCode()函数是HashMap，HashSet等区分不同对象的标识符函数
+	。。。解决了这一点的话，使用HashMap比使用双List要好太多

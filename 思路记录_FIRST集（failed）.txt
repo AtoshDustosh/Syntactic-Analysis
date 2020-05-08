@@ -1,0 +1,103 @@
+计划使用一个二维矩阵来存储产生式之间的调用关系
+但是这个二维矩阵
+	- 肯定会充满大量的0
+	- 有多少产生式，就有多少行和列
+	- 需要把“|”的产生式拆分开，进而导致出现大量的产生式
+
+具体使用的话，比如
+	当前行对应的产生式，计算其左部的FIRST集、FOLLOW集时，需要扫描整行，查找存在调用关系的产生式
+	找到产生式后，要递归到那个产生式内部，重复扫描。具体细节具体处理。
+	FIRST集可以只找它的第一个找到的产生式
+	FOLLOW集需要根据语法符号之间的先后顺序来决定，但是这样的话，矩阵的作用就小了
+。。。
+二维矩阵辅助实现计划————放弃
+
+新的方案
+	仍然需要将产生式的“|”（或）拆分开，修改后的所有产生式仍存入Productions类中
+	之后进入某个Production，计算其FIRST集
+		进入该Production的右部，不断递归进入产生右部的第一个非终结符对应的产生式
+		不过这个样子的话，就得严格避免左递归（直接或间接都不行）的出现了
+		————新的待添加功能：检查是否存在左递归文法
+		关于回溯与语法的错误处理的问题，那是任务4要考虑的事情了
+
+不过我要在输入阶段检查是否是左递归，处理完后还要检查是否符合LL（1）文法，这两个步骤要分到不同的类中吗？
+合并起来的话，一会输入产生式，检查左递归，一会输入预测分析表，检查LL（1）。
+。。。可以限定输入到具体的函数，这样就可以合并起来了
+
+检查左递归
+	怎么检查？直接左递归还好说，间接左递归怎么整？一个个代进去？
+	。。。
+	算了，pass掉吧（时间与个人精力的限制）
+
+计算FIRST集的具体方案（旧）
+针对所有产生式，不断循环处理
+	设置计数countEmpty=0
+	如果产生式右部第1个语法符号是非终结符，则将右部第1个非终结符的FIRST集加入到当前非终结符的FIRST集
+	否则，将这个终结符加入到当前非终结符的FIRST集中
+	新的循环(i = 0; i < RHS.size(); i++)
+		如果产生式右部第i个语法符号的FIRST集中包含empty（即“空串”）且i < RHS.size() - 1，则将第i+1个语法符号的FIRST集也加入当前非终结符的FIRST集，同时countEmpty++
+		否则，即刻break
+	如果循环结束后countEmpty==RHS.size()，则说明当前非终结符可能推导出空串，将empty加入当前非终结符的FIRST集中；否则，从当前FIRST集中去除empty（因为此时当前非终结符不会推导出空串）
+直到所有产生式的FIRST集在某次循环后没有发生变化
+（加入FIRST集的函数会返回是否对当前FIRST集进行了修改）
+
+下面是失败的实现————失败原因：将带有“|”的production拆开，导致在productions中需要不停重复定位production
+	进而导致了程序的复杂度上升；不过主要的失败原因还是无法根据当前程序结构实现First集前后的比较。
+	因为只对一个产生式做处理，可能不会影响到FistSets，从而导致提前结束循环。
+  private void buildFirstSets() {
+    boolean modified = false;
+    int productionIndex = 0;
+    do {
+      Production production = this.productions.getProduction(productionIndex);
+      int countEmpty = 0;
+      GrammarSymbol tempLHSsymbol = production.getLHS();
+      List<GrammarSymbol> terminalList = new ArrayList<>();
+      GrammarSymbol tempRHSsymbol = production.getRHS().get(0);
+      // process the first grammar symbol of RHS of the production
+      if (tempRHSsymbol.getType().equals(GrammarSymbolType.NONTERMINAL)) {
+        terminalList = this.firstSets.getTerminalList(tempRHSsymbol);
+        this.firstSets.addFirstSet(tempLHSsymbol, terminalList);
+        modified = true;
+      } else if (tempRHSsymbol.getType().equals(GrammarSymbolType.TERMINAL)) {
+        terminalList.add(tempRHSsymbol);
+        modified = modified
+            || this.firstSets.addFirstSet(tempLHSsymbol, terminalList);
+      }
+      // process the "empty" grammar symbol of RHS of the production
+      for (int i = 0; i < production.getRHS().size(); i++) {
+        tempRHSsymbol = production.getRHS().get(i);
+        terminalList = this.firstSets.getTerminalList(tempRHSsymbol);
+        boolean containsEmpty = false;
+        for (int j = 0; j < terminalList.size(); j++) { // see if contains empty
+          GrammarSymbol tempTerminal = terminalList.get(j);
+          if (tempTerminal.getString().equals("empty")) {
+            containsEmpty = true;
+            break;
+          }
+        }
+        if (containsEmpty && i < production.getRHS().size() - 1) {
+          GrammarSymbol tempRHSsymbolNext = production.getRHS().get(i + 1);
+          List<GrammarSymbol> terminalListNext = this.firstSets
+              .getTerminalList(tempRHSsymbolNext);
+          modified = modified
+              || this.firstSets.addFirstSet(tempLHSsymbol, terminalListNext);
+          countEmpty++;
+        } else if (containsEmpty && i == production.getRHS().size() - 1) {
+          countEmpty++;
+        } else {
+          break;
+        }
+      }
+      if (countEmpty == production.getRHS().size()) {
+        terminalList = new ArrayList<>();
+        terminalList.add(new GrammarSymbol("empty"));
+        modified = modified
+            || this.firstSets.addFirstSet(tempLHSsymbol, terminalList);
+      } else {
+        this.firstSets.removeFirstSetItem(tempLHSsymbol,
+            new GrammarSymbol("empty"));
+      }
+      System.out.println("modified: " + modified);
+    } while (modified);
+    this.firstSetBuilt = true;
+  }

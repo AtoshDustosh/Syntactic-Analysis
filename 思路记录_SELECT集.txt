@@ -1,0 +1,9 @@
+已有功能
+	- 从FirstSets和FollowSets中，根据产生式的左部的非终结符，取出对应的First集和Follow集
+
+SELECT集的计算具体步骤（初步思路）
+首先需要将Productions打碎
+遍历每一个打碎后的产生式（循环）
+	如果产生式右部的所有语法符号组成的语法符号串的FIRST集不包含empty
+		在当前产生式的Select集中加入这个First集
+	否则，在当前产生式的Select集中加入这个First集（去除empty），以及左部的Follow集
